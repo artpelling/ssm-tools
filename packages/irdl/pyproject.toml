@@ -1,0 +1,14 @@
+[project]
+name = "irdl"
+version = "0.1.0"
+description = "Python package to download and process impulse response datasets."
+readme = "README.md"
+authors = [
+    { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
