@@ -7,7 +7,9 @@ authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pyfar>=0.7.3",
+]
 
 [project.scripts]
 ssm-tools = "ssm_tools:main"
@@ -15,3 +17,6 @@ ssm-tools = "ssm_tools:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv.workspace]
+members = ["packages/datasets"]
