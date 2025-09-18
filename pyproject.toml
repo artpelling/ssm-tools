@@ -20,3 +20,8 @@ build-backend = "hatchling.build"
 
 [tool.uv.workspace]
 members = ["packages/datasets"]
+
+[dependency-groups]
+lint = [
+    "ruff>=0.13.0",
+]
