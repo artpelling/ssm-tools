@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = []
+license = "MIT"
 
 [build-system]
 requires = ["hatchling"]
