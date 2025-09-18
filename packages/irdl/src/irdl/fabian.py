@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import pooch as po
+import pyfar as pf
+
+from zipfile import ZipFile
+from pathlib import Path
+
+from irdl.downloader import pooch_from_doi, process
+
+
+def get_fabian(kind='measured', hato=0, path=po.os_cache("irdl")):
+    """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
+
+    Parameters
+    ----------
+    kind : str
+        Type of HRTF to download. Either 'measured' or 'modeled'.
+    hato : int
+        Head-above-torso-rotation of HRTFs in degrees.
+        Either 0, 10, 20, 30, 40, 50, 310, 320, 330, 340 or 350.
+    path : str
+        Path to the directory where the data should be stored.
+
+    Returns
+    -------
+    data : pyfar.Signal
+
+    """
+    assert kind in ['measured', 'modeled'], "kind must be either 'measured' or 'modeled'"
+    assert hato in [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350], "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
+    path = Path(path) / "FABIAN" / "raw"
+    doi = "10.14279/depositonce-5718.5"
+    zipfile = "FABIAN_HRTF_DATABASE_v4.zip"
+
+    pup = pooch_from_doi(doi, path=path)
+    pup.fetch(zipfile, progressbar=True)
+
+    logger = po.get_logger()
+
+    @process
+    def extract(infile, outfile):
+        with ZipFile(Path(path) / zipfile, "r") as zf:
+            for name in zf.namelist():
+                if name.endswith(infile.name):
+                    # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
+                    zf.getinfo(name).filename = Path(name).name
+                    logger.info(
+                        f"Extracting {name} to {infile.parent / Path(name).name}"
+                    )
+                    zf.extract(name, path=infile.parent)
+        data = pf.io.read_sofa(infile)
+        pf.io.write(
+            outfile,
+            **dict(
+                zip(
+                    ("impulse_response", "source_coordinates", "receiver_coordinates"),
+                    data,
+                )
+            ),
+        )
+        return data
+
+    return extract(path / f'FABIAN_HRIR_{kind}_HATO_{hato}.sofa', action="fetch", pup=pup)

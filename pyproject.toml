@@ -1,14 +1,17 @@
 [project]
 name = "ssm-tools"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python toolbox for reduced order modelling of acoustic systems"
 readme = "README.md"
 authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "irdl",
+    "pooch>=1.8.2",
     "pyfar>=0.7.3",
+    "tqdm>=4.67.1",
 ]
 
 [project.scripts]
@@ -18,10 +21,13 @@ ssm-tools = "ssm_tools:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv.workspace]
-members = ["packages/datasets"]
-
 [dependency-groups]
 lint = [
     "ruff>=0.13.0",
 ]
+
+[tool.uv.sources]
+irdl = {workspace = true}
+
+[tool.uv.workspace]
+members = ["packages/irdl"]
