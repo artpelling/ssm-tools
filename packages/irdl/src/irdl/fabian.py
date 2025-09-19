@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import pooch as po
 import pyfar as pf
 
@@ -20,15 +18,20 @@ def get_fabian(kind='measured', hato=0, path=po.os_cache("irdl")):
         Head-above-torso-rotation of HRTFs in degrees.
         Either 0, 10, 20, 30, 40, 50, 310, 320, 330, 340 or 350.
     path : str
-        Path to the directory where the data should be stored.
+        Path to the directory where the data should be stored. Will be overwritten, if the
+        environment variable `IRDL_DATA_DIR` is set. Default is the user cache directory.
 
     Returns
     -------
-    data : pyfar.Signal
-
+    data : dict
+        Dictionary containing the impulse responses and the source and receiver coordinates. The
+        impulse responses are stored in the key 'impulse_response' as a :class:`pyfar.Signal`. The
+        source and receiver coordinates are stored as :class:`pyfar.Coordinates` in the keys
+        'source_coordinates' and 'receiver_coordinates', respectively.
     """
     assert kind in ['measured', 'modeled'], "kind must be either 'measured' or 'modeled'"
     assert hato in [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350], "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
+
     path = Path(path) / "FABIAN" / "raw"
     doi = "10.14279/depositonce-5718.5"
     zipfile = "FABIAN_HRTF_DATABASE_v4.zip"
