@@ -7,10 +7,10 @@ authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
 ]
 requires-python = ">=3.13"
-dependencies = []
-
-[project.scripts]
-across = "across:main"
+dependencies = [
+    "pyfar>=0.7.3",
+    "pymor>=2025.1.2",
+]
 
 [build-system]
 requires = ["hatchling"]
