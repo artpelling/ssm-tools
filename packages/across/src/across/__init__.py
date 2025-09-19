@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from across!")
+from .era import ERA as ERA

@@ -8,10 +8,8 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "across",
     "irdl",
-    "pooch>=1.8.2",
-    "pyfar>=0.7.3",
-    "tqdm>=4.67.1",
 ]
 
 [project.scripts]
@@ -22,6 +20,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
+dev = [
+    "ruff>=0.13.0",
+]
 lint = [
     "ruff>=0.13.0",
 ]
@@ -31,4 +32,4 @@ across = {workspace = true}
 irdl = {workspace = true}
 
 [tool.uv.workspace]
-members = ["packages/across", "packages/irdl"]
+members = ["packages/*"]
