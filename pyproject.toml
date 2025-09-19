@@ -1,7 +1,7 @@
 [project]
 name = "ssm-tools"
 version = "0.1.0"
-description = "Python toolbox for reduced order modelling of acoustic systems"
+description = "Python toolbox for state-space systems of acoustic systems."
 readme = "README.md"
 authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
@@ -21,9 +21,6 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.0",
-]
-lint = [
     "ruff>=0.13.0",
 ]
 
