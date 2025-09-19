@@ -4,7 +4,7 @@ from pymor.reductors.era import ERAReductor
 class ERA:
     """Eigensystem Realization Algorithm (ERA).
 
-    Wraps pymor's ERAReductor to provide a simple interface for reducing impulse resonses in pyFAR format.
+    Wraps pymor's ERAReductor to provide a simple interface for reducing impulse responses in pyFAR format.
 
     Parameters
     ----------
