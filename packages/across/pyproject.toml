@@ -1,0 +1,18 @@
+[project]
+name = "across"
+version = "0.1.0"
+description = "Python package for the construction of reduced order state space models from impulse response data."
+readme = "README.md"
+authors = [
+    { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pyfar>=0.7.3",
+    "pymor>=2025.1.2",
+]
+license = "MIT"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
