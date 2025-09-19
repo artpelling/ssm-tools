@@ -4,9 +4,15 @@ requires-python = ">=3.13"
 
 [manifest]
 members = [
+    "across",
     "irdl",
     "ssm-tools",
 ]
+
+[[package]]
+name = "across"
+version = "0.1.0"
+source = { editable = "packages/across" }
 
 [[package]]
 name = "beautifulsoup4"
