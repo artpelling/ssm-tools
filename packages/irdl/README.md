@@ -30,3 +30,4 @@ Does not contain sampling weights}
 - Leverages [`pooch`](https://www.fatiando.org/pooch/latest/) to download impulse response datasets and verifies their integrity with a checksum. 
 - Only downloads, extracts and processes what is needed.
 - Adds `pooch`-support for dSpace repositories, such as [depositonce](https://depositonce.tu-berlin.de/home).
+- Data storage location can be set by `IRDL_DATA_DIR` environmental variable (defaults to user cache directory).
