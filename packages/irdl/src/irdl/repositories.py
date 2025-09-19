@@ -37,6 +37,9 @@ from pooch.downloaders import (
 )
 from pooch.utils import parse_url
 
+from time import sleep
+from requests.exceptions import ConnectionError
+
 
 DEFAULT_TIMEOUT = 30  # seconds
 
@@ -164,7 +167,21 @@ def doi_to_repository(doi):
     ]
 
     # Extract the DOI and the repository information
-    archive_url = doi_to_url(doi)
+    i = 0
+    archive_url = None
+    while i < 10:
+        try:
+            archive_url = doi_to_url(doi)
+            break
+        except ConnectionError as e:
+            print(e[1], f"Retrying ({i}/10)")
+        i += 1
+        sleep(0.5)
+
+    if archive_url is None:
+        raise ConnectionError(
+            f"Could not resolve DOI {doi} to a URL. Check the DOI or try running the script again."
+        )
 
     # Try the converters one by one until one of them returned a URL
     data_repository = None
