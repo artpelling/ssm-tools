@@ -27,7 +27,8 @@ lint = [
 ]
 
 [tool.uv.sources]
+across = {workspace = true}
 irdl = {workspace = true}
 
 [tool.uv.workspace]
-members = ["packages/irdl"]
+members = ["packages/across", "packages/irdl"]

@@ -1,0 +1,17 @@
+[project]
+name = "across"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+across = "across:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
