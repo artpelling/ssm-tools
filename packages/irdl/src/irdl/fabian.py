@@ -7,7 +7,7 @@ from pathlib import Path
 from irdl.downloader import pooch_from_doi, process
 
 
-def get_fabian(kind='measured', hato=0, path=po.os_cache("irdl")):
+def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
     """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
 
     Parameters
@@ -29,8 +29,12 @@ def get_fabian(kind='measured', hato=0, path=po.os_cache("irdl")):
         source and receiver coordinates are stored as :class:`pyfar.Coordinates` in the keys
         'source_coordinates' and 'receiver_coordinates', respectively.
     """
-    assert kind in ['measured', 'modeled'], "kind must be either 'measured' or 'modeled'"
-    assert hato in [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350], "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
+    assert kind in ["measured", "modeled"], (
+        "kind must be either 'measured' or 'modeled'"
+    )
+    assert hato in [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350], (
+        "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
+    )
 
     path = Path(path) / "FABIAN" / "raw"
     doi = "10.14279/depositonce-5718.5"
@@ -52,16 +56,15 @@ def get_fabian(kind='measured', hato=0, path=po.os_cache("irdl")):
                         f"Extracting {name} to {infile.parent / Path(name).name}"
                     )
                     zf.extract(name, path=infile.parent)
-        data = pf.io.read_sofa(infile)
-        pf.io.write(
-            outfile,
-            **dict(
-                zip(
-                    ("impulse_response", "source_coordinates", "receiver_coordinates"),
-                    data,
-                )
-            ),
+        data = dict(
+            zip(
+                ("impulse_response", "source_coordinates", "receiver_coordinates"),
+                pf.io.read_sofa(infile),
+            )
         )
+        pf.io.write(outfile, **data)
         return data
 
-    return extract(path / f'FABIAN_HRIR_{kind}_HATO_{hato}.sofa', action="fetch", pup=pup)
+    return extract(
+        path / f"FABIAN_HRIR_{kind}_HATO_{hato}.sofa", action="fetch", pup=pup
+    )

@@ -6,7 +6,7 @@ from pathlib import Path
 from irdl.repositories import doi_to_repository
 
 
-def pooch_from_doi(doi, path=po.os_cache('irdl')):
+def pooch_from_doi(doi, path=po.os_cache("irdl")):
     """Create a Pooch instance from a DOI.
 
     Parameters
