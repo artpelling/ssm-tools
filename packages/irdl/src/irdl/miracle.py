@@ -31,7 +31,7 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
     assert scenario in ["A1", "A2", "D1", "R2"], (
         "scenario must be one of ['A1', 'A2', 'D1', 'R2']"
     )
-    scenario += '.h5'
+    scenario += ".h5"
 
     path = Path(path) / "MIRACLE" / "raw"
     doi = "10.14279/depositonce-20837"
@@ -42,11 +42,11 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
     @process
     def process_miracle(infile, outfile):
         data = dict()
-        with h5.File(infile, 'r') as f:
-            ir = f.get('data')['impulse_response'][()]
-            fs = f.get('metadata')['sampling_rate'][()]
-            spos = f.get('data')['location']['source'][()]
-            rpos= f.get('data')['location']['receiver'][()]
+        with h5.File(infile, "r") as f:
+            ir = f.get("data")["impulse_response"][()]
+            fs = f.get("metadata")["sampling_rate"][()]
+            spos = f.get("data")["location"]["source"][()]
+            rpos = f.get("data")["location"]["receiver"][()]
 
         data["impulse_response"] = pf.Signal(ir, sampling_rate=fs)
         data["source_coordinates"] = pf.Coordinates(*spos.T)
@@ -54,4 +54,4 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
         pf.io.write(outfile, **data)
         return data
 
-    return process_miracle(path  / scenario, action='fetch', pup=pup)
+    return process_miracle(path / scenario, action="fetch", pup=pup)
