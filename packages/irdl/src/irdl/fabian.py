@@ -10,6 +10,8 @@ from irdl.downloader import pooch_from_doi, process
 def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
     """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
 
+    DOI: 10.14279/depositonce-5718.5
+
     Parameters
     ----------
     kind : str
@@ -17,7 +19,7 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
     hato : int
         Head-above-torso-rotation of HRTFs in degrees.
         Either 0, 10, 20, 30, 40, 50, 310, 320, 330, 340 or 350.
-    path : str
+    path : str or `pathlib.Path`
         Path to the directory where the data should be stored. Will be overwritten, if the
         environment variable `IRDL_DATA_DIR` is set. Default is the user cache directory.
 
