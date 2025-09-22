@@ -2,6 +2,11 @@
 Python package to download and process impulse response datasets.
 
 ## Available datasets
+
+### Room Impulse Responses
+- [MIRACLE](https://doi.org/10.14279/depositonce-20837) via `irdl.get_miracle`
+
+### Head-related Impulse Responses
 - [FABIAN-HRTF](https://doi.org/10.14279/depositonce-5718.5) via `irdl.get_fabian`
 
 ## Example

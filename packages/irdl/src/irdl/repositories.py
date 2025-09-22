@@ -28,6 +28,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from pooch import get_logger
 from pooch.downloaders import (
     DataRepository,
     FigshareRepository,
@@ -174,7 +175,7 @@ def doi_to_repository(doi):
             archive_url = doi_to_url(doi)
             break
         except ConnectionError as e:
-            print(e[1], f"Retrying ({i}/10)")
+            get_logger().warning(f"Connection error: {str(e)}. Retrying ({i}/10)")
         i += 1
         sleep(0.5)
 
