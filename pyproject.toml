@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "across",
     "irdl",
+    "pyqt6>=6.9.1",
 ]
 
 [project.scripts]
@@ -24,9 +25,14 @@ dev = [
     "ruff>=0.13.0",
 ]
 
+[tool.basedpyright]
+venv = ".venv"
+typeCheckingMode = 'off'
+
 [tool.uv.sources]
 across = {workspace = true}
 irdl = {workspace = true}
+pyfar = {path = '../pyfar', editable=true}
 
 [tool.uv.workspace]
 members = ["packages/*"]
