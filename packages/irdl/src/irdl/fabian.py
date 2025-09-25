@@ -1,8 +1,8 @@
 import pooch as po
 import pyfar as pf
 
-from zipfile import ZipFile
 from pathlib import Path
+from zipfile import ZipFile
 
 from irdl.downloader import pooch_from_doi, process
 
@@ -53,7 +53,6 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
             with ZipFile(Path(path) / zipfile, "r") as zf:
                 for name in zf.namelist():
                     if name.endswith(file.name):
-                        # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
                         zf.getinfo(name).filename = Path(name).name
                         logger.info(
                             f"Extracting {name} to {file.parent / Path(name).name}"

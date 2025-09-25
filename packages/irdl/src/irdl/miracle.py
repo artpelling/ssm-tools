@@ -33,7 +33,7 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
     )
     scenario += ".h5"
 
-    path = Path(path) / "MIRACLE" / "raw"
+    path = Path(path) / "MIRACLE"
     doi = "10.14279/depositonce-20837"
 
     pup = pooch_from_doi(doi, path=path)
