@@ -42,15 +42,12 @@ def process(func):
     def check_process(fname, action, pup=None):
         logger = po.get_logger()
         fname = Path(fname)
-        outfile = (fname.parent.parent / "processed" / fname.stem).with_suffix(".far")
-        if outfile.exists() and action == "fetch":
-            logger.info(
-                f"Processed file '{outfile}' exists and '{fname}' is up to date."
-            )
-            return pf.io.read(outfile)
+        if fname.exists() and action == "fetch":
+            logger.info(f"The file '{fname}' exists is up to date.")
+            return func(fname, process=False)
         else:
-            logger.info(f"Processing file '{fname}' and writing to '{outfile}'.")
-            outfile.parent.mkdir(parents=True, exist_ok=True)
-            return func(fname, outfile)
+            logger.info(f"Processing and writing to '{fname}'.")
+            fname.parent.mkdir(parents=True, exist_ok=True)
+            return func(fname, process=True)
 
     return check_process

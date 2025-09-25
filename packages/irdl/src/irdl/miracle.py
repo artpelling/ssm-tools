@@ -40,9 +40,9 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
     pup.fetch(scenario, progressbar=True)
 
     @process
-    def process_miracle(infile, outfile):
+    def process_miracle(file, process=True):
         data = dict()
-        with h5.File(infile, "r") as f:
+        with h5.File(file, "r") as f:
             ir = f.get("data")["impulse_response"][()]
             fs = f.get("metadata")["sampling_rate"][()]
             spos = f.get("data")["location"]["source"][()]
@@ -51,7 +51,6 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
         data["impulse_response"] = pf.Signal(ir, sampling_rate=fs)
         data["source_coordinates"] = pf.Coordinates(*spos.T)
         data["receiver_coordinates"] = pf.Coordinates(*rpos.T)
-        pf.io.write(outfile, **data)
         return data
 
     return process_miracle(path / scenario, action="fetch", pup=pup)
