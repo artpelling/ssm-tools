@@ -38,7 +38,7 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
         "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
     )
 
-    path = Path(path) / "FABIAN" / "raw"
+    path = Path(path) / "FABIAN"
     doi = "10.14279/depositonce-5718.5"
     zipfile = "FABIAN_HRTF_DATABASE_v4.zip"
 
@@ -48,23 +48,23 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
     logger = po.get_logger()
 
     @process
-    def extract(infile, outfile):
-        with ZipFile(Path(path) / zipfile, "r") as zf:
-            for name in zf.namelist():
-                if name.endswith(infile.name):
-                    # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
-                    zf.getinfo(name).filename = Path(name).name
-                    logger.info(
-                        f"Extracting {name} to {infile.parent / Path(name).name}"
-                    )
-                    zf.extract(name, path=infile.parent)
+    def extract(file, process=True):
+        if process:
+            with ZipFile(Path(path) / zipfile, "r") as zf:
+                for name in zf.namelist():
+                    if name.endswith(file.name):
+                        # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
+                        zf.getinfo(name).filename = Path(name).name
+                        logger.info(
+                            f"Extracting {name} to {file.parent / Path(name).name}"
+                        )
+                        zf.extract(name, path=file.parent)
         data = dict(
             zip(
                 ("impulse_response", "source_coordinates", "receiver_coordinates"),
-                pf.io.read_sofa(infile),
+                pf.io.read_sofa(file),
             )
         )
-        pf.io.write(outfile, **data)
         return data
 
     return extract(
