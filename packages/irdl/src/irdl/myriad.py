@@ -1,3 +1,4 @@
+import numpy as np
 import pooch as po
 import pyfar as pf
 
@@ -7,7 +8,7 @@ from zipfile import ZipFile
 from irdl.downloader import pooch_from_doi, process
 
 
-def get_myriad(room="SAL", path=po.os_cache("irdl")):
+def get_myriad(room="SAL", array="circular", config="P1", path=po.os_cache("irdl")):
     """Download and extract the MYRIAD database from Zenodo.
 
     DOI: 10.5281/zenodo.7389996
@@ -17,6 +18,9 @@ def get_myriad(room="SAL", path=po.os_cache("irdl")):
 
     room : str
         Name of the room to download. Either 'SAL' or 'AIL'.
+    array : str
+        Type of microphone array to download. Either 'circular', 'dummy head', 'external' or
+        'behind-the-ear'.
     path : str or `pathlib.Path`
         Path to the directory where the data should be stored. Will be overwritten, if the
         environment variable `IRDL_DATA_DIR` is set. Default is the user cache directory.
@@ -31,6 +35,11 @@ def get_myriad(room="SAL", path=po.os_cache("irdl")):
     """
 
     assert room in ["SAL", "AIL"], "room must be either 'SAL' or 'AIL'"
+    assert array in ["circular", "dummy head", "external", "behind-the-ear"], "mics must be one of ['circular', 'dummy head', 'external', 'behind-the-ear']"
+    if room == "SAL":
+        assert array != "circular", "circular microphone array not available in SAL room"
+    elif room == "AIL":
+        assert config in ["P1", "P2"], "config must be either 'P1' or 'P2' for AIL room"
 
     path = Path(path) / "MYRIAD"
     doi = "10.5281/zenodo.7389996"
@@ -83,34 +92,40 @@ def get_myriad(room="SAL", path=po.os_cache("irdl")):
             "S90_1",
         ],
     }
+    mics = {
+        "circular": ["CMA10_-90", "CMA10_0", "CMA10_90", "CMA10_180", "CMA20_-135", "CMA20_-90", "CMA20_-45", "CMA20_0", "CMA20_45", "CMA20_90", "CMA20_135", "CMA20_180"],
+        "dummy head": ["DHL", "DHR"],
+        "external": ["XM1", "XM2", "XM3", "XM4", "XM5"],
+        "behind-the-ear": ["BTELB", "BTELF", "BTERB", "BTERF"],
+    }
 
-    mics = [
-        "BTELB",
-        "BTELF",
-        "BTERB",
-        "BTERF",
-        "DHL",
-        "DHR",
-        "XM1",
-        "XM2",
-        "XM3",
-        "XM4",
-        "XM5",
-    ]
+    sampling_rate = 44100
+    n_samples = 132300
+
+    def iter_files(room, array, config):
+        for ls in speakers[room]:
+            wf = Path(room) / ls
+            if room == "AIL":
+                wf /= config
+            for m in mics[array]:
+                yield wf / f"{m}_RIR.wav"
 
     @process
     def extract(file, process=True):
         if process:
             with ZipFile(path / zipfile, "r") as zf:
-                for ls in speakers[room]:
-                    for p in ["P1", "P2"]:
-                        for m in mics:
-                            wf = Path(room) / ls / p / (m + "_RIR.wav")
-                            name = str(root / wf)
-                            zf.getinfo(name).filename = str(wf)
-                            logger.info(f"Extracting {name} to {path / wf}")
-                            zf.extract(name, path=file.parent)
+                for wf in iter_files(room, array, config):
+                    name = str(root / wf)
+                    zf.getinfo(name).filename = str(wf)
+                    logger.info(f"Extracting {name} to {path / wf}")
+                    zf.extract(name, path=file.parent)
 
-                return file
+        irs = np.zeros((len(mics[array])*len(speakers[room]), n_samples))
+        for i, wf in enumerate(iter_files(room, array, config)):
+            irs[i] = pf.io.read_audio(path / wf).time
+
+        return {
+            "impulse_response": pf.Signal(irs.reshape(len(speakers[room]), len(mics[array]), n_samples), sampling_rate=sampling_rate),
+        }
 
     return extract(path / "MYRiAD_econ.sofa", action="fetch", pup=pup)
