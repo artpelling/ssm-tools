@@ -8,13 +8,23 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
-    "across",
+    "h5py>=3.14.0",
     "irdl",
+    "numpy>=2.3.3",
     "pyqt6>=6.9.1",
+    "scipy>=1.16.2",
 ]
 
 [project.scripts]
 ssm-tools = "ssm_tools:main"
+
+[project.optional-dependencies]
+across = [
+    "across",
+]
+pymor = [
+    "pymor>=2025.1.2",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -30,9 +40,8 @@ venv = ".venv"
 typeCheckingMode = 'off'
 
 [tool.uv.sources]
-across = {workspace = true}
-irdl = {workspace = true}
-pyfar = {path = '../pyfar', editable=true}
+irdl = { workspace = true }
+across = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/*"]
