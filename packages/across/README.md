@@ -1,6 +1,15 @@
 # `across`: Acoustic Reduced Order State-space Systems
 Python package for reduced order modelling of acoustics state space systems with the Eigensystem Realization Algorithm (ERA). The package wraps [`pymor`](https://pymor.org) reductors for use with [`pyfar`](https://pyfar.org) signals to remove boilerplate code and assure compatibility.
 
+## Installation
+Add
+``` toml
+dependencies = [
+   "across @ git+https://github.com/artpelling/ssm-tools#subdirectory=packages/across"
+]
+```
+to your `pyproject.toml` (or similarly to `requirements.txt`). 
+
 ## Example
 To create a reduced order state-space system from impulse response data, simply pass the data to the `ERA` reductor class and call its `reduce` method (works well for short IRs).
 ``` python

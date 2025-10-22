@@ -1,6 +1,15 @@
 # `irdl`: Impulse Response Downloader
 Python package to download and process impulse response datasets.
 
+## Installation
+Add
+``` toml
+dependencies = [
+   "irdl @ git+https://github.com/artpelling/ssm-tools#subdirectory=packages/irdl"
+]
+```
+to your `pyproject.toml` (or similarly to `requirements.txt`). 
+
 ## Available datasets
 
 ### Room Impulse Responses
