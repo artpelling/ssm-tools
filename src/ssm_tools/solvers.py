@@ -16,7 +16,7 @@ def solver(sys, signal):
     return out
 
 
-@jit(nopython=True, cache=False)
+@jit(nopython=True, cache=True)
 def basic_solver(out, x, A, B, C, D, sig):
     for i in range(out.shape[1]):
         out[:, i] = C @ x + D @ sig[:, i]
