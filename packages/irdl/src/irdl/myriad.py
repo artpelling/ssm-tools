@@ -2,6 +2,7 @@ import numpy as np
 import pooch as po
 import pyfar as pf
 
+from itertools import chain
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -50,7 +51,7 @@ def get_myriad(room="SAL", array="circular", config="P1", path=po.os_cache("irdl
 
     logger = po.get_logger()
 
-    root = Path("MYRiAD_V2_econ") / "audio"
+    root = Path("MYRiAD_V2_econ")
 
     speakers = {
         "AIL": [
@@ -104,26 +105,32 @@ def get_myriad(room="SAL", array="circular", config="P1", path=po.os_cache("irdl
 
     def iter_files(room, array, config):
         for ls in speakers[room]:
-            wf = Path(room) / ls
+            wf = Path("audio") / room / ls
             if room == "AIL":
                 wf /= config
             for m in mics[array]:
                 yield wf / f"{m}_RIR.wav"
 
+        yield Path("coord") / f"{room}.csv"
+
     @process
     def extract(file, process=True):
         if process:
             with ZipFile(path / zipfile, "r") as zf:
-                for wf in iter_files(room, array, config):
-                    name = str(root / wf)
-                    zf.getinfo(name).filename = str(wf)
-                    logger.info(f"Extracting {name} to {path / wf}")
-                    zf.extract(name, path=file.parent)
+                for wf in chain(iter_files(room, array, config)):
+                    member = str(root / wf)
+                    zf.getinfo(member).filename = str(wf.relative_to(root))
+
+                    logger.info(f"Extracting {member} to {path / wf}")
+                    zf.extract(member, path=file.parent)
 
         irs = np.zeros((len(mics[array])*len(speakers[room]), n_samples))
         for i, wf in enumerate(iter_files(room, array, config)):
             irs[i] = pf.io.read_audio(path / wf).time
 
+        print(path)
+        coords = np.genfromtxt(path / f"{room}.csv", delimiter=",", names=True)
+        print(coords)
         return {
             "impulse_response": pf.Signal(irs.reshape(len(speakers[room]), len(mics[array]), n_samples), sampling_rate=sampling_rate),
         }
