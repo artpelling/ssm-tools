@@ -55,3 +55,10 @@ class SolveRandomNumbaBasic(SolveRandomBase):
         self.sys.init_state()
         self.sys.process(Signal(self.sig.time[:, :1], sampling_rate=1))
         self.sys.init_state()
+
+
+class SolveRandomBlas(SolveRandomBase):
+    def setup(self, m, p, n, dtype):
+        super().setup(m, p, n, dtype)
+        self.sys = NumbaStateSpaceModel.from_pyfar(self.sys, solver="blas")
+        self.sys.init_state()

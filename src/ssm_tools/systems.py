@@ -6,8 +6,6 @@ from pyfar.classes.filter import StateSpaceModel
 from pyfar import Signal
 import scipy.linalg as spla
 
-from ssm_tools.solvers import basic_solver
-
 
 class NumbaStateSpaceModel(StateSpaceModel):
     solver = "numba"
