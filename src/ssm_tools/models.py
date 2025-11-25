@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from numba import jit
+from numba import jit, float64, float32
 from pyfar.classes.filter import StateSpaceModel
 from pyfar import Signal
 
@@ -23,12 +23,36 @@ class NumbaStateSpaceModel(StateSpaceModel):
         return Signal(out, sampling_rate=signal.sampling_rate)
 
     def _process(self, signal):
-        out = np.zeros((self.n_outputs, signal.n_samples), self.dtype)
-        self._solver(out, self.state, self._A, self._B, self._C, self._D, signal.time)
+        out = np.zeros((self.n_outputs, signal.n_samples), self.dtype, order="F")
+        sig = np.asfortranarray(signal.time)
+        self._solver(out, np.asfortranarray(self.state), self._A, self._B, self._C, self._D, sig)
         return out
 
     @staticmethod
-    @jit(nopython=True, cache=True, fastmath=True)
+    @jit(
+        [
+            (
+                float32[::1, :],
+                float32[::1],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+            ),
+            (
+                float64[::1, :],
+                float64[::1],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+            ),
+        ],
+        nopython=True,
+        cache=True,
+    )
     def _solver(out, x, A, B, C, D, sig):
         for i in range(out.shape[1]):
             out[:, i] = C @ x + D @ sig[:, i]

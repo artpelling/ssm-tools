@@ -20,7 +20,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9" },
+    { name = "pyfar", editable = "../pyfar" },
     { name = "pymor", specifier = ">=2025.1.2" },
 ]
 
@@ -391,7 +391,7 @@ dependencies = [
 requires-dist = [
     { name = "h5py", specifier = ">=3.14.0" },
     { name = "pooch", specifier = ">=1.8.2" },
-    { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9" },
+    { name = "pyfar", editable = "../pyfar" },
     { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
@@ -744,7 +744,7 @@ wheels = [
 [[package]]
 name = "pyfar"
 version = "0.7.3"
-source = { git = "https://github.com/pyfar/pyfar?rev=f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9#f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9" }
+source = { editable = "../pyfar" }
 dependencies = [
     { name = "deepdiff" },
     { name = "matplotlib" },
@@ -754,6 +754,36 @@ dependencies = [
     { name = "soundfile" },
     { name = "urllib3" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "autodocsumm", marker = "extra == 'docs'", specifier = ">=0.2.14" },
+    { name = "build", marker = "extra == 'deploy'" },
+    { name = "bump-my-version", marker = "extra == 'deploy'" },
+    { name = "coverage", marker = "extra == 'tests'" },
+    { name = "deepdiff" },
+    { name = "matplotlib" },
+    { name = "numpy", specifier = ">=1.23.0" },
+    { name = "pydata-sphinx-theme", marker = "extra == 'docs'" },
+    { name = "pyfar", extras = ["deploy", "tests", "docs"], marker = "extra == 'dev'" },
+    { name = "pytest", marker = "extra == 'tests'" },
+    { name = "pytest-cov", marker = "extra == 'tests'" },
+    { name = "ruff", marker = "extra == 'tests'", specifier = "==0.4.1" },
+    { name = "scipy", specifier = ">=1.5.0" },
+    { name = "setuptools", marker = "extra == 'deploy'" },
+    { name = "sofar", specifier = ">=0.1.2" },
+    { name = "soundfile", specifier = ">=0.11.0" },
+    { name = "sphinx", marker = "extra == 'docs'" },
+    { name = "sphinx-design", marker = "extra == 'docs'" },
+    { name = "sphinx-favicon", marker = "extra == 'docs'" },
+    { name = "sphinx-mdinclude", marker = "extra == 'docs'" },
+    { name = "sphinx-reredirects", marker = "extra == 'docs'" },
+    { name = "twine", marker = "extra == 'deploy'" },
+    { name = "urllib3" },
+    { name = "watchdog", marker = "extra == 'tests'" },
+    { name = "wheel", marker = "extra == 'deploy'" },
+]
+provides-extras = ["deploy", "tests", "docs", "dev"]
 
 [[package]]
 name = "pygments"
@@ -1138,7 +1168,7 @@ requires-dist = [
     { name = "h5py", specifier = ">=3.14.0" },
     { name = "numba", specifier = ">=0.62.1" },
     { name = "numpy", specifier = ">=2.3.3" },
-    { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9" },
+    { name = "pyfar", editable = "../pyfar" },
     { name = "pymor", marker = "extra == 'pymor'", specifier = ">=2025.1.2" },
     { name = "pyqt6", specifier = ">=6.9.1" },
     { name = "scipy", specifier = ">=1.16.2" },
