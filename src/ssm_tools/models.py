@@ -28,7 +28,7 @@ class NumbaStateSpaceModel(StateSpaceModel):
         return out
 
     @staticmethod
-    @jit(nopython=True, cache=True)
+    @jit(nopython=True, cache=True, fastmath=True)
     def _solver(out, x, A, B, C, D, sig):
         for i in range(out.shape[1]):
             out[:, i] = C @ x + D @ sig[:, i]
