@@ -1,7 +1,7 @@
 # Write the benchmarking functions here.
 # See "Writing benchmarks" in the asv docs for more information.
 
-from ssm_tools.systems import NumbaStateSpaceModel
+from ssm_tools.systems import NumbaStateSpaceModel, TriangularStateSpaceModel, DiagonalStateSpaceModel
 from pyfar.classes.filter import StateSpaceModel
 from pyfar import Signal
 import numpy as np
@@ -28,7 +28,7 @@ for dtype in DTYPE:
 
 
 class Compare:
-    params = ((StateSpaceModel, NumbaStateSpaceModel), (np.float64, np.float32))
+    params = ((StateSpaceModel, NumbaStateSpaceModel, TriangularStateSpaceModel, DiagonalStateSpaceModel), (np.float64, np.float32))
     param_names = ("class", "dtype")
     track_error_unit = "norm"
 

@@ -26,10 +26,13 @@ class NumbaStateSpaceModel(StateSpaceModel):
         return Signal(out, sampling_rate=signal.sampling_rate)
 
 
-class TriangularStateSpaceModel:
+class TriangularStateSpaceModel(NumbaStateSpaceModel):
     packed = False
-    pass
+
+    def process(self, signal):
+        raise NotImplementedError("TriangularStateSpaceModel is not implemented yet.")
 
 
-class DiagonalStateSpaceModel:
-    pass
+class DiagonalStateSpaceModel(NumbaStateSpaceModel):
+    def process(self, signal):
+        raise NotImplementedError("DiagonalStateSpaceModel is not implemented yet.")
