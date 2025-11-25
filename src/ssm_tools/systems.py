@@ -4,6 +4,7 @@ import numpy as np
 from numba import jit
 from pyfar.classes.filter import StateSpaceModel
 from pyfar import Signal
+import scipy.linalg as spla
 
 from ssm_tools.solvers import basic_solver
 
@@ -49,11 +50,13 @@ class NumbaStateSpaceModel(StateSpaceModel):
             x = A @ x + B @ sig[:, i]
 
     @staticmethod
-    @jit(nopython=True, cache=True)
     def _blas_solver(out, x, A, B, C, D, sig):
+        gemv = spla.get_blas_funcs("gemv", arrays=(A, B, C, D))
         for i in range(out.shape[1]):
-            out[:, i] = C @ x + D @ sig[:, i]
-            x = A @ x + B @ sig[:, i]
+            out[:, i] = gemv(1., D, sig[:, i], beta=0, y=out[:, i])
+            out[:, i] = gemv(1., C, x, beta=1, y=out[:, i])
+            x = gemv(1., A, x, beta=0, y=x)
+            x = gemv(1., B, sig[:, i], beta=1, y=x)
 
 
 class TriangularStateSpaceModel(NumbaStateSpaceModel):
