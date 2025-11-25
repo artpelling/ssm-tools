@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "project": "ssm-tools",
+    "project_url": "https://project-homepage.org/",
+    "repo": ".",
+    "build_command": [
+         "python -m pip install build",
+         "python -m build",
+         "python -m pip wheel --no-deps --no-build-isolation --no-index -w {build_cache_dir} {build_dir}"
+         //"python -m pip wheel -w {build_cache_dir} {build_dir}"
+     ],
+    "install_command": [
+        "in-dir={env_dir} pip install {wheel_file}"
+    ],
+    "branches": ["main"], // for git
+    "matrix": {
+        "req": {
+            "pip+pyfar": ["-e ../pyfar"]
+        }
+    },
+    "environment_type": "uv",
+    "env_dir": ".asv/env",
+    "results_dir": ".asv/results",
+    "html_dir": ".asv/html",
+}
