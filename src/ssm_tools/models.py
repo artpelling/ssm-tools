@@ -38,10 +38,18 @@ class NumbaStateSpaceModel(StateSpaceModel):
 class TriangularStateSpaceModel(StateSpaceModel):
     packed = False
 
+    @classmethod
+    def from_pyfar(cls, sys: StateSpaceModel):
+        raise NotImplementedError("TriangularStateSpaceModel is not implemented yet.")
+
     def process(self, signal):
         raise NotImplementedError("TriangularStateSpaceModel is not implemented yet.")
 
 
 class DiagonalStateSpaceModel(StateSpaceModel):
+    @classmethod
+    def from_pyfar(cls, sys: StateSpaceModel):
+        raise NotImplementedError("DiagonalStateSpaceModel is not implemented yet.")
+
     def process(self, signal):
         raise NotImplementedError("DiagonalStateSpaceModel is not implemented yet.")
