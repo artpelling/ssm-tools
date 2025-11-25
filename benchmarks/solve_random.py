@@ -1,7 +1,7 @@
 # Write the benchmarking functions here.
 # See "Writing benchmarks" in the asv docs for more information.
 
-from ssm_tools.solvers import solver
+from ssm_tools.systems import NumbaStateSpaceModel
 from pyfar.classes.filter import StateSpaceModel
 from pyfar import Signal
 import numpy as np
@@ -32,36 +32,26 @@ for m, p, n, dtype in product(M, P, N, DTYPE):
     DATA[f"{m}-{p}-{n}-{dtype}"] = (sys, sig, ref)
 
 
-class _SolveRandom:
+class SolveRandomBase:
     params = (M, P, N, DTYPE)
     param_names = ["m", "p", "n", "dtype"]
+    track_error_unit = "norm"
 
     def setup(self, m, p, n, dtype):
         self.sys, self.sig, self.ref = DATA[f"{m}-{p}-{n}-{dtype}"]
 
-
-class _SolveRandomNumba(_SolveRandom):
-    def setup(self, m, p, n, dtype):
-        super().setup(m, p, n, dtype)
-        # Warm up numba JIT
-        solver(self.sys, self.sig)
-
-    def track_error(self, m, p, n, dtype):
-        out = solver(self.sys, self.sig)
-        return float(spla.norm(self.ref - out))
-
-
-class SolveRandomPyfar(_SolveRandom):
-    track_error_unit = "norm"
-
     def time_solver(self, *args):
-        self.sys.process(self.sig).time
+        self.sys.process(self.sig)
 
     def track_error(self, m, p, n, dtype):
         out = self.sys.process(self.sig).time
         return float(spla.norm(self.ref - out))
 
 
-class SolveRandomNumbaBasic(_SolveRandomNumba):
-    def time_solver(self, *args):
-        solver(self.sys, self.sig)
+class SolveRandomNumbaBasic(SolveRandomBase):
+    def setup(self, m, p, n, dtype):
+        super().setup(m, p, n, dtype)
+        self.sys = NumbaStateSpaceModel.from_pyfar(self.sys, solver="numba")
+        self.sys.init_state()
+        self.sys.process(Signal(self.sig.time[:, :1], sampling_rate=1))
+        self.sys.init_state()
