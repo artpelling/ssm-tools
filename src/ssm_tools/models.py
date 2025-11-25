@@ -18,15 +18,11 @@ class NumbaStateSpaceModel(StateSpaceModel):
             dtype=sys.dtype,
         )
 
-    def process(self, signal):
-        out = self._process(signal)
-        return Signal(out, sampling_rate=signal.sampling_rate)
-
-    def _process(self, signal):
-        out = np.zeros((self.n_outputs, signal.n_samples), self.dtype, order="F")
-        sig = np.asfortranarray(signal.time)
-        self._solver(out, np.asfortranarray(self.state), self._A, self._B, self._C, self._D, sig)
-        return out
+    def _process(self, u):
+        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="F")
+        u = np.asfortranarray(u)
+        self._solver(y, np.asfortranarray(self.state), self._A, self._B, self._C, self._D, u)
+        return y
 
     @staticmethod
     @jit(
