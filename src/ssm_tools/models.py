@@ -21,7 +21,7 @@ class NumbaStateSpaceModel(StateSpaceModel):
     def _process(self, u):
         y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="F")
         u = np.asfortranarray(u)
-        self._solver(y, np.asfortranarray(self.state), self._A, self._B, self._C, self._D, u)
+        self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
         return y
 
     @staticmethod
