@@ -53,7 +53,7 @@ class Compare:
         if cls != StateSpaceModel:
             self.sys = cls.from_pyfar(self.sys)
             self.sys.init_state()
-            self.sys.process(Signal(self.sig.time[:, :1], sampling_rate=1))
+            self.sys.process(Signal(self.sig.time[:, :2], sampling_rate=1))
         self.sys.init_state()
 
     def time_solver(self, *args):
