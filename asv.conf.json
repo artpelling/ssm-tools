@@ -12,7 +12,7 @@
     "install_command": [
         "in-dir={env_dir} pip install {wheel_file}"
     ],
-    "branches": ["asv"], // for git
+    "branches": ["main"], // for git
     "matrix": {
         "req": {
             "pip+pyfar": ["-e ../pyfar"]
