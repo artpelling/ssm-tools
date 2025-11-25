@@ -19,8 +19,8 @@ class NumbaStateSpaceModel(StateSpaceModel):
         )
 
     def _process(self, u):
-        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="F")
-        u = np.asfortranarray(u)
+        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="C")
+        u = np.ascontiguousarray(u)
         self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
         return y
 
@@ -28,22 +28,22 @@ class NumbaStateSpaceModel(StateSpaceModel):
     @jit(
         [
             (
-                float32[::1, :],
+                float32[:, ::1],
                 float32[::1],
-                float32[::1, :],
-                float32[::1, :],
-                float32[::1, :],
-                float32[::1, :],
-                float32[::1, :],
+                float32[:, ::1],
+                float32[:, ::1],
+                float32[:, ::1],
+                float32[:, ::1],
+                float32[:, ::1],
             ),
             (
-                float64[::1, :],
+                float64[:, ::1],
                 float64[::1],
-                float64[::1, :],
-                float64[::1, :],
-                float64[::1, :],
-                float64[::1, :],
-                float64[::1, :],
+                float64[:, ::1],
+                float64[:, ::1],
+                float64[:, ::1],
+                float64[:, ::1],
+                float64[:, ::1],
             ),
         ],
         nopython=True,
