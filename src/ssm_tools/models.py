@@ -19,6 +19,59 @@ class NumbaStateSpaceModel(StateSpaceModel):
         )
 
     def _process(self, u):
+        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="F")
+        u = np.asfortranarray(u)
+        self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
+        return y
+
+    @staticmethod
+    @jit(
+        [
+            (
+                float32[::1, :],
+                float32[::1],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+                float32[::1, :],
+            ),
+            (
+                float64[::1, :],
+                float64[::1],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+                float64[::1, :],
+            ),
+        ],
+        nopython=True,
+        cache=True,
+    )
+    def _solver(out, x, A, B, C, D, sig):
+        for i in range(out.shape[1]):
+            out[:, i] = C @ x + D @ sig[:, i]
+            x = A @ x + B @ sig[:, i]
+
+class NumbaCStateSpaceModel(StateSpaceModel):
+    @classmethod
+    def from_pyfar(cls, sys: StateSpaceModel):
+        sys = cls(
+            A=sys._A,
+            B=sys._B,
+            C=sys._C,
+            D=sys._D,
+            sampling_rate=sys.sampling_rate,
+            dtype=sys.dtype,
+        )
+        sys._A = np.ascontiguousarray(sys._A)
+        sys._B = np.ascontiguousarray(sys._B)
+        sys._C = np.ascontiguousarray(sys._C)
+        sys._D = np.ascontiguousarray(sys._D)
+        return sys
+
+    def _process(self, u):
         y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="C")
         u = np.ascontiguousarray(u)
         self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
