@@ -1,9 +1,0 @@
-{
-    "arch": "x86_64",
-    "cpu": "Intel(R) Core(TM) i5-9400F CPU @ 2.90GHz",
-    "machine": "kano",
-    "num_cpu": "6",
-    "os": "Linux 6.8.0-87-generic",
-    "ram": "16",
-    "version": 1
-}

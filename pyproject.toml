@@ -12,7 +12,7 @@ dependencies = [
     "numpy>=2.3.3",
     "pyqt6>=6.9.1",
     "scipy>=1.16.2",
-    "pyfar@git+https://github.com/pyfar/pyfar.git@f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9",
+    "pyfar@git+https://github.com/pyfar/pyfar.git@497c67d135720974479a65c74ccabb75c79840be",
     "numba>=0.62.1",
 ]
 
@@ -35,9 +35,6 @@ build-backend = "hatchling.build"
 dev = [
     "ruff>=0.13.0",
 ]
-benchmark = [
-    "asv>=0.6.5",
-]
 
 [tool.basedpyright]
 venv = ".venv"
@@ -50,7 +47,7 @@ allow-direct-references = true
 [tool.uv.sources]
 irdl = { workspace = true }
 across = { workspace = true }
-pyfar = { git = "https://github.com/pyfar/pyfar", rev = "f1b8f4218b174f5fc41ea26fb4aeb36907a41aa9" }
+pyfar = { git = "https://github.com/pyfar/pyfar", rev = "497c67d135720974479a65c74ccabb75c79840be" }
 asv = { git = "https://github.com/airspeed-velocity/asv" }
 
 [tool.uv.workspace]
