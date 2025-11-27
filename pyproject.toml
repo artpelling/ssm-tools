@@ -10,7 +10,6 @@ requires-python = ">=3.13"
 dependencies = [
     "h5py>=3.14.0",
     "numpy>=2.3.3",
-    "pyqt6>=6.9.1",
     "scipy>=1.16.2",
     "pyfar@git+https://github.com/pyfar/pyfar.git@497c67d135720974479a65c74ccabb75c79840be",
     "numba>=0.62.1",
@@ -48,7 +47,7 @@ allow-direct-references = true
 irdl = { workspace = true }
 across = { workspace = true }
 pyfar = { git = "https://github.com/pyfar/pyfar", rev = "497c67d135720974479a65c74ccabb75c79840be" }
-asv = { git = "https://github.com/airspeed-velocity/asv" }
+
 
 [tool.uv.workspace]
 members = ["packages/*"]
