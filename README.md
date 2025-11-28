@@ -11,7 +11,6 @@ The `ssm_tools` package contains [`pyfar`](https://pyfar.org)-compatible classes
 
 ### Installation
 Add
-
 ``` toml
 dependencies = [
     "ssm_tools @ git+https://github.com/artpelling/ssm-tools"
