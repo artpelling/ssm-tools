@@ -3,12 +3,45 @@
 import numpy as np
 from numba import jit, float64, float32
 from pyfar.classes.filter import StateSpaceModel
-from pyfar import Signal
 
 
 class NumbaStateSpaceModel(StateSpaceModel):
+    def __init__(
+            self, A, B, C, D=None, sampling_rate=None, state=None, dtype=None, storage='F', comment=""
+    ):
+        D = np.zeros((C.shape[0], B.shape[1])) if D is None else D
+        assert all(
+            [isinstance(M, np.ndarray) and (M.ndim == 2) for M in (A, B, C, D)]
+        )
+        assert A.shape[1] == A.shape[0], "A needs to be square."
+        assert B.shape[0] == A.shape[0], (
+            f"B needs to be of shape ({A.shape[0]}, m)."
+        )
+        assert C.shape[1] == A.shape[0], (
+            f"C needs to be of shape (p, {A.shape[0]})."
+        )
+        assert D.shape == (C.shape[0], B.shape[1]), (
+            f"D needs to be of shape ({C.shape[0], B.shape[1]})."
+        )
+        dtype = np.result_type(A, B, C, D) if dtype is None else dtype
+        A, B, C, D = A.astype(dtype, order=storage), B.astype(dtype, order=storage), C.astype(dtype, order=storage), D.astype(dtype, order=storage)
+        super(StateSpaceModel, self).__init__(
+            sampling_rate=sampling_rate, state=state, comment=comment
+        )
+        self._A, self._B, self._C, self._D, self._dtype, self._storage = A, B, C, D, dtype, storage
+
+    @property
+    def storage(self):
+        """The memory layout of the internal matrices."""
+        return self._storage
+
+    @storage.setter
+    def storage(self, value):
+        assert value in ('F', 'C'), "Storage must be either 'F' (Fortran) or 'C' (Contiguous)."
+        self._storage = value
+
     @classmethod
-    def from_pyfar(cls, sys: StateSpaceModel):
+    def from_pyfar(cls, sys: StateSpaceModel, storage='F'):
         return cls(
             A=sys._A,
             B=sys._B,
@@ -16,12 +49,18 @@ class NumbaStateSpaceModel(StateSpaceModel):
             D=sys._D,
             sampling_rate=sys.sampling_rate,
             dtype=sys.dtype,
+            storage=storage,
         )
 
     def _process(self, u):
-        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="F")
-        u = np.asfortranarray(u)
-        self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
+        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order=self.storage)
+        if self.storage == 'F':
+            u = np.asfortranarray(u)
+            solver = self._solver_F
+        else:
+            u = np.ascontiguousarray(u)
+            solver = self._solver_C
+        solver(y, self.state, self._A, self._B, self._C, self._D, u)
         return y
 
     @staticmethod
@@ -49,34 +88,11 @@ class NumbaStateSpaceModel(StateSpaceModel):
         nopython=True,
         cache=True,
     )
-    def _solver(out, x, A, B, C, D, sig):
+    def _solver_F(out, x, A, B, C, D, sig):
         for i in range(out.shape[1]):
             out[:, i] = C @ x + D @ sig[:, i]
             x = A @ x + B @ sig[:, i]
 
-class NumbaCStateSpaceModel(StateSpaceModel):
-    @classmethod
-    def from_pyfar(cls, sys: StateSpaceModel):
-        sys = cls(
-            A=sys._A,
-            B=sys._B,
-            C=sys._C,
-            D=sys._D,
-            sampling_rate=sys.sampling_rate,
-            dtype=sys.dtype,
-        )
-        sys._A = np.ascontiguousarray(sys._A)
-        sys._B = np.ascontiguousarray(sys._B)
-        sys._C = np.ascontiguousarray(sys._C)
-        sys._D = np.ascontiguousarray(sys._D)
-        return sys
-
-    def _process(self, u):
-        y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order="C")
-        u = np.ascontiguousarray(u)
-        self._solver(y, self.state, self._A, self._B, self._C, self._D, u)
-        return y
-
     @staticmethod
     @jit(
         [
@@ -102,7 +118,7 @@ class NumbaCStateSpaceModel(StateSpaceModel):
         nopython=True,
         cache=True,
     )
-    def _solver(out, x, A, B, C, D, sig):
+    def _solver_C(out, x, A, B, C, D, sig):
         for i in range(out.shape[1]):
             out[:, i] = C @ x + D @ sig[:, i]
             x = A @ x + B @ sig[:, i]
