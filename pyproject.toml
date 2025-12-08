@@ -11,7 +11,7 @@ dependencies = [
     "h5py>=3.14.0",
     "numpy>=2.3.3",
     "scipy>=1.16.2",
-    "pyfar@git+https://github.com/pyfar/pyfar.git@497c67d135720974479a65c74ccabb75c79840be",
+    "pyfar@git+https://github.com/pyfar/pyfar.git@8561f4039231cc925f5d2e1dfd8a2eb2719cb28b",
     "numba>=0.62.1",
 ]
 
@@ -46,7 +46,7 @@ allow-direct-references = true
 [tool.uv.sources]
 irdl = { workspace = true }
 across = { workspace = true }
-pyfar = { git = "https://github.com/pyfar/pyfar", rev = "497c67d135720974479a65c74ccabb75c79840be" }
+pyfar = { git = "https://github.com/pyfar/pyfar", rev = "8561f4039231cc925f5d2e1dfd8a2eb2719cb28b" }
 
 
 [tool.uv.workspace]
