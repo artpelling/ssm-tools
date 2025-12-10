@@ -1,7 +1,6 @@
-import pyfar as pf
-import pooch as po
-
 from pathlib import Path
+
+import pooch as po
 
 from irdl.repositories import doi_to_repository
 
@@ -20,6 +19,7 @@ def pooch_from_doi(doi, path=po.os_cache("irdl")):
     -------
     pup : Pooch
         The Pooch instance.
+
     """
     pup = po.create(path=path, base_url=doi, retry_if_failed=2, env="IRDL_DATA_DIR")
     repository = doi_to_repository(doi)

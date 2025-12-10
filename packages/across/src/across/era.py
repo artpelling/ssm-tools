@@ -10,6 +10,7 @@ class ERA:
     ----------
     ir : pyfar.Signal
         The impulse response to be reduced. Must be a `pyfar.Signal` with `cdim=2`, where `ir.cshape=(n_inputs, n_outputs)`.
+
     """
 
     def __init__(self, ir):
@@ -32,5 +33,6 @@ class ERA:
         -------
         A, B, C : ndarray
             The state-space matrices of the reduced model.
+
         """
         return self.reductor.reduce(order).to_matrices()[:4]
