@@ -33,7 +33,7 @@ class ERA:
 
         Returns
         -------
-        A, B, C : ndarray
+        A, B, C, D : ndarray
             The state-space matrices of the reduced model.
 
         """
