@@ -1,12 +1,13 @@
-import pyfar as pf
-import pooch as po
-
 from pathlib import Path
+
+import pooch as po
 
 from irdl.repositories import doi_to_repository
 
+CACHE_DIR = po.os_cache("irdl")
 
-def pooch_from_doi(doi, path=po.os_cache("irdl")):
+
+def pooch_from_doi(doi, path=CACHE_DIR):
     """Create a Pooch instance from a DOI.
 
     Parameters
@@ -20,6 +21,7 @@ def pooch_from_doi(doi, path=po.os_cache("irdl")):
     -------
     pup : Pooch
         The Pooch instance.
+
     """
     pup = po.create(path=path, base_url=doi, retry_if_failed=2, env="IRDL_DATA_DIR")
     repository = doi_to_repository(doi)
@@ -32,11 +34,10 @@ def pooch_from_doi(doi, path=po.os_cache("irdl")):
 def process(func):
     """Decorator to process downloaded files.
 
-    The decorated function should take two arguments: the input file
-    name and the output file name. The decorator checks if the output
-    file already exists and is up to date. If so, it returns the output
-    file name. Otherwise, it calls the decorated function to process
-    the input file and create the output file.
+    The decorated function should take two arguments: the input file name and the output file name.
+    The decorator checks if the output file already exists and is up to date. If so, it returns the
+    output file name. Otherwise, it calls the decorated function to process the input file and
+    create the output file.
     """
 
     def check_process(fname, action, pup=None):

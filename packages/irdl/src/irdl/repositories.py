@@ -1,5 +1,4 @@
-"""
-This file is based on source code from the pooch project:
+"""This file is based on source code from the pooch project:
 
 Copyright (c) 2018 The Pooch Developers
 All rights reserved.
@@ -28,19 +27,18 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+from time import sleep
+
 from pooch import get_logger
 from pooch.downloaders import (
     DataRepository,
+    DataverseRepository,
     FigshareRepository,
     ZenodoRepository,
-    DataverseRepository,
     doi_to_url,
 )
 from pooch.utils import parse_url
-
-from time import sleep
 from requests.exceptions import ConnectionError
-
 
 DEFAULT_TIMEOUT = 30  # seconds
 
@@ -53,8 +51,7 @@ class DSpaceRepository(DataRepository):
 
     @classmethod
     def initialize(cls, doi, archive_url):
-        """
-        Initialize the data repository if the given URL points to a
+        """Initialize the data repository if the given URL points to a
         corresponding repository.
 
         Initializes a data repository object. This is done as part of
@@ -68,8 +65,8 @@ class DSpaceRepository(DataRepository):
             The DOI that identifies the repository
         archive_url : str
             The resolved URL for the DOI
-        """
 
+        """
         # Check whether this is a Figshare URL
         parsed_archive_url = parse_url(archive_url)
         if parsed_archive_url["netloc"] != "depositonce.tu-berlin.de":
@@ -106,8 +103,7 @@ class DSpaceRepository(DataRepository):
         return self._api_response
 
     def download_url(self, file_name):
-        """
-        Use the repository API to get the download URL for a file given
+        """Use the repository API to get the download URL for a file given
         the archive URL.
 
         Parameters
@@ -119,26 +115,25 @@ class DSpaceRepository(DataRepository):
         -------
         download_url : str
             The HTTP URL that can be used to download the file.
+
         """
         return self.api_response[file_name]["url"]
 
     def populate_registry(self, pooch):
-        """
-        Populate the registry using the data repository's API
+        """Populate the registry using the data repository's API
 
         Parameters
         ----------
         pooch : Pooch
             The pooch instance that the registry will be added to.
-        """
 
+        """
         for name, info in self.api_response.items():
             pooch.registry[name] = info["checksum"]
 
 
 def doi_to_repository(doi):
-    """
-    Instantiate a data repository instance from a given DOI.
+    """Instantiate a data repository instance from a given DOI.
 
     This function implements the chain of responsibility dispatch
     to the correct data repository class.
@@ -152,8 +147,8 @@ def doi_to_repository(doi):
     -------
     data_repository : DataRepository
         The data repository object
-    """
 
+    """
     # This should go away in a separate issue: DOI handling should
     # not rely on the (non-)existence of trailing slashes. The issue
     # is documented in https://github.com/fatiando/pooch/issues/324
@@ -180,9 +175,7 @@ def doi_to_repository(doi):
         sleep(0.5)
 
     if archive_url is None:
-        raise ConnectionError(
-            f"Could not resolve DOI {doi} to a URL. Check the DOI or try running the script again."
-        )
+        raise ConnectionError(f"Could not resolve DOI {doi} to a URL. Check the DOI or try running the script again.")
 
     # Try the converters one by one until one of them returned a URL
     data_repository = None
