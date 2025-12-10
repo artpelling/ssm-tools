@@ -1,13 +1,12 @@
 from pathlib import Path
 
 import h5py as h5
-import pooch as po
 import pyfar as pf
 
-from irdl.downloader import pooch_from_doi, process
+from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_miracle(scenario="A1", path=po.os_cache("irdl")):
+def get_miracle(scenario="A1", path=CACHE_DIR):
     """Download and extract the MIRACLE database from DepositOnce.
 
     DOI: 10.14279/depositonce-20837

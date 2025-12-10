@@ -4,10 +4,10 @@ from zipfile import ZipFile
 import pooch as po
 import pyfar as pf
 
-from irdl.downloader import pooch_from_doi, process
+from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
+def get_fabian(kind="measured", hato=0, path=CACHE_DIR):
     """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
 
     DOI: 10.14279/depositonce-5718.5
@@ -52,7 +52,6 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
             with ZipFile(Path(path) / zipfile, "r") as zf:
                 for name in zf.namelist():
                     if name.endswith(file.name):
-                        # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
                         zf.getinfo(name).filename = Path(name).name
                         logger.info(f"Extracting {name} to {file.parent / Path(name).name}")
                         zf.extract(name, path=file.parent)
@@ -60,6 +59,7 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
             zip(
                 ("impulse_response", "source_coordinates", "receiver_coordinates"),
                 pf.io.read_sofa(file),
+                strict=True,
             )
         )
         return data

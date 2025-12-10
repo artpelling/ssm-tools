@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ssm-tools = "ssm_tools:main"
+reduce-fabian = "ssm_tools.scripts.reduce_fabian:main"
 
 [project.optional-dependencies]
 across = [
@@ -57,6 +57,7 @@ typeCheckingMode = 'off'
 
 [tool.ruff]
 src = ["src"]
+exclude = ["packages/irdl/src/irdl/repositories.py"]
 line-length = 120
 
 [tool.ruff.format]
@@ -64,3 +65,13 @@ quote-style = "double"
 
 [tool.ruff.lint]
 select = ["B", "D", "E", "F", "I", "ICN", "N", "Q", "W"]
+ignore = [
+    "D100", "D104", "D401",
+    "N803",
+]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 100
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
