@@ -8,24 +8,20 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "across",
     "h5py>=3.14.0",
-    "numpy>=2.3.3",
-    "scipy>=1.16.2",
-    "pyfar@git+https://github.com/pyfar/pyfar.git@1f7f96939447534557a624f012360ce466136b27",
+    "irdl",
     "numba>=0.62.1",
+    "numpy>=2.3.3",
+    "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
+    "pymor>=2025.1.2",
+    "scipy>=1.16.2",
     "typer>=0.17.4",
 ]
 
 [project.scripts]
 reduce-fabian = "ssm_tools.scripts.reduce_fabian:main"
 
-[project.optional-dependencies]
-across = [
-    "across",
-]
-pymor = [
-    "pymor>=2025.1.2",
-]
 
 [build-system]
 requires = ["hatchling"]
