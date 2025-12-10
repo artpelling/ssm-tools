@@ -1,13 +1,13 @@
+from pathlib import Path
+from zipfile import ZipFile
+
 import pooch as po
 import pyfar as pf
 
-from zipfile import ZipFile
-from pathlib import Path
-
-from irdl.downloader import pooch_from_doi, process
+from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
+def get_fabian(kind="measured", hato=0, path=CACHE_DIR):
     """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
 
     DOI: 10.14279/depositonce-5718.5
@@ -30,10 +30,9 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
         impulse responses are stored in the key 'impulse_response' as a :class:`pyfar.Signal`. The
         source and receiver coordinates are stored as :class:`pyfar.Coordinates` in the keys
         'source_coordinates' and 'receiver_coordinates', respectively.
+
     """
-    assert kind in ["measured", "modeled"], (
-        "kind must be either 'measured' or 'modeled'"
-    )
+    assert kind in ["measured", "modeled"], "kind must be either 'measured' or 'modeled'"
     assert hato in [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350], (
         "hato must be one of [0, 10, 20, 30, 40, 50, 310, 320, 330, 340, 350]"
     )
@@ -53,20 +52,16 @@ def get_fabian(kind="measured", hato=0, path=po.os_cache("irdl")):
             with ZipFile(Path(path) / zipfile, "r") as zf:
                 for name in zf.namelist():
                     if name.endswith(file.name):
-                        # if name.startswith(Path(zipfile).stem + '/1 HRIRs/SOFA/FABIAN_HRIR') and name.endswith('.sofa'):
                         zf.getinfo(name).filename = Path(name).name
-                        logger.info(
-                            f"Extracting {name} to {file.parent / Path(name).name}"
-                        )
+                        logger.info(f"Extracting {name} to {file.parent / Path(name).name}")
                         zf.extract(name, path=file.parent)
         data = dict(
             zip(
                 ("impulse_response", "source_coordinates", "receiver_coordinates"),
                 pf.io.read_sofa(file),
+                strict=True,
             )
         )
         return data
 
-    return extract(
-        path / f"FABIAN_HRIR_{kind}_HATO_{hato}.sofa", action="fetch", pup=pup
-    )
+    return extract(path / f"FABIAN_HRIR_{kind}_HATO_{hato}.sofa", action="fetch", pup=pup)

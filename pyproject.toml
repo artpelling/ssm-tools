@@ -13,10 +13,11 @@ dependencies = [
     "scipy>=1.16.2",
     "pyfar@git+https://github.com/pyfar/pyfar.git@1f7f96939447534557a624f012360ce466136b27",
     "numba>=0.62.1",
+    "typer>=0.17.4",
 ]
 
 [project.scripts]
-ssm-tools = "ssm_tools:main"
+reduce-fabian = "ssm_tools.scripts.reduce_fabian:main"
 
 [project.optional-dependencies]
 across = [
@@ -32,22 +33,45 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.0",
+    "ruff>=0.14.8",
 ]
-
-[tool.basedpyright]
-venv = ".venv"
-typeCheckingMode = 'off'
 
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
 
 [tool.uv.sources]
 irdl = { workspace = true }
 across = { workspace = true }
 pyfar = { git = "https://github.com/pyfar/pyfar", rev = "1f7f96939447534557a624f012360ce466136b27" }
 
-
 [tool.uv.workspace]
 members = ["packages/*"]
+
+
+[tool.basedpyright]
+venv = ".venv"
+typeCheckingMode = 'off'
+
+
+[tool.ruff]
+src = ["src"]
+exclude = ["packages/irdl/src/irdl/repositories.py"]
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["B", "D", "E", "F", "I", "ICN", "N", "Q", "W"]
+ignore = [
+    "D100", "D104", "D401",
+    "N803",
+]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 100
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

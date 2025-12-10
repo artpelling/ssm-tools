@@ -1,13 +1,12 @@
-import pooch as po
-import pyfar as pf
-
-import h5py as h5
 from pathlib import Path
 
-from irdl.downloader import pooch_from_doi, process
+import h5py as h5
+import pyfar as pf
+
+from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_miracle(scenario="A1", path=po.os_cache("irdl")):
+def get_miracle(scenario="A1", path=CACHE_DIR):
     """Download and extract the MIRACLE database from DepositOnce.
 
     DOI: 10.14279/depositonce-20837
@@ -27,10 +26,9 @@ def get_miracle(scenario="A1", path=po.os_cache("irdl")):
         impulse responses are stored in the key 'impulse_response' as a :class:`pyfar.Signal`. The
         source and receiver coordinates are stored as :class:`pyfar.Coordinates` in the keys
         'source_coordinates' and 'receiver_coordinates', respectively.
+
     """
-    assert scenario in ["A1", "A2", "D1", "R2"], (
-        "scenario must be one of ['A1', 'A2', 'D1', 'R2']"
-    )
+    assert scenario in ["A1", "A2", "D1", "R2"], "scenario must be one of ['A1', 'A2', 'D1', 'R2']"
     scenario += ".h5"
 
     path = Path(path) / "MIRACLE" / "raw"
