@@ -311,7 +311,6 @@ dependencies = [
     { name = "h5py" },
     { name = "pooch" },
     { name = "pyfar" },
-    { name = "tqdm" },
     { name = "typer" },
 ]
 
@@ -320,7 +319,6 @@ requires-dist = [
     { name = "h5py", specifier = ">=3.14.0" },
     { name = "pooch", specifier = ">=1.8.2" },
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=1f7f96939447534557a624f012360ce466136b27" },
-    { name = "tqdm", specifier = ">=4.67.1" },
     { name = "typer", specifier = ">=0.17.4" },
 ]
 
@@ -910,20 +908,15 @@ name = "ssm-tools"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "across" },
     { name = "h5py" },
+    { name = "irdl" },
     { name = "numba" },
     { name = "numpy" },
     { name = "pyfar" },
+    { name = "pymor" },
     { name = "scipy" },
     { name = "typer" },
-]
-
-[package.optional-dependencies]
-across = [
-    { name = "across" },
-]
-pymor = [
-    { name = "pymor" },
 ]
 
 [package.dev-dependencies]
@@ -933,16 +926,16 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "across", marker = "extra == 'across'", editable = "packages/across" },
+    { name = "across", editable = "packages/across" },
     { name = "h5py", specifier = ">=3.14.0" },
+    { name = "irdl", editable = "packages/irdl" },
     { name = "numba", specifier = ">=0.62.1" },
     { name = "numpy", specifier = ">=2.3.3" },
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=1f7f96939447534557a624f012360ce466136b27" },
-    { name = "pymor", marker = "extra == 'pymor'", specifier = ">=2025.1.2" },
+    { name = "pymor", specifier = ">=2025.1.2" },
     { name = "scipy", specifier = ">=1.16.2" },
     { name = "typer", specifier = ">=0.17.4" },
 ]
-provides-extras = ["across", "pymor"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "ruff", specifier = ">=0.14.8" }]
@@ -954,18 +947,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b7/4d/08c89e34946fce2aec4fbb45c9016efd5f4d7f24af8e5d93296e935631d8/threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e", size = 21274 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/32/d5/f9a850d79b0851d1d4ef6456097579a9005b31fea68726a4ae5f2d82ddd9/threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb", size = 18638 },
-]
-
-[[package]]
-name = "tqdm"
-version = "4.67.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz", hash = "sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2", size = 169737 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/30/dc54f88dd4a2b5dc8a0279bdd7270e735851848b762aeb1c1184ed1f6b14/tqdm-4.67.1-py3-none-any.whl", hash = "sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2", size = 78540 },
 ]
 
 [[package]]
