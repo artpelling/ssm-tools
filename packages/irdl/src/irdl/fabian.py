@@ -7,7 +7,7 @@ import pyfar as pf
 from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_fabian(kind="measured", hato=0, path=CACHE_DIR):
+def get_fabian(kind: str = "measured", hato: int = 0, path: str = CACHE_DIR):
     """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
 
     DOI: 10.14279/depositonce-5718.5

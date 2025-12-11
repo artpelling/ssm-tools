@@ -6,7 +6,7 @@ import pyfar as pf
 from irdl.downloader import CACHE_DIR, pooch_from_doi, process
 
 
-def get_miracle(scenario="A1", path=CACHE_DIR):
+def get_miracle(scenario: str = "A1", path: str = CACHE_DIR):
     """Download and extract the MIRACLE database from DepositOnce.
 
     DOI: 10.14279/depositonce-20837
