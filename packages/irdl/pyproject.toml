@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "h5py>=3.14.0",
+    "numpydoc>=1.10.0",
     "pooch>=1.8.2",
     "pyfar>=0.7.3",
     "typer>=0.17.4",

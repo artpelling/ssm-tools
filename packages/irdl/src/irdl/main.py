@@ -1,51 +1,22 @@
+from inspect import getmodule, signature
+from typing import Annotated
+
 import typer
+from numpydoc.docscrape import FunctionDoc
 
-from irdl.downloader import CACHE_DIR
+from irdl import get_fabian, get_miracle
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
-
-@app.command()
-def fabian(
-    kind: str = typer.Option("measured", help="Type of HRTF to download. Either 'measured' or 'modeled'."),
-    hato: int = typer.Option(
-        0,
-        help=(
-            "Head-above-torso-rotation of HRTFs in degrees. Either 0, 10, 20, 30, 40, 50, 310, 320, 330, 340 or 350."
-        ),
-    ),
-    path: str = typer.Option(
-        CACHE_DIR,
-        help=(
-            "Path to the directory where the data should be stored. Will be overwritten, if the environment variable"
-            " `IRDL_DATA_DIR` is set. Default is the user cache directory."
-        ),
-    ),
-):
-    """Download and extract the FABIAN HRTF Database v4 from DepositOnce.
-
-    DOI: 10.14279/depositonce-5718.5
-    """
-    from irdl.fabian import get_fabian
-
-    get_fabian(kind=kind, hato=hato, path=path)
-
-
-@app.command()
-def miracle(
-    scenario: str = typer.Option("A1", help="Name of the scenario to download. Either 'A1', 'A2', 'D1', or 'R2'."),
-    path: str = typer.Option(
-        CACHE_DIR,
-        help=(
-            "Path to the directory where the data should be stored. Will be overwritten, if the environment variable"
-            " `IRDL_DATA_DIR` is set. Default is the user cache directory."
-        ),
-    ),
-):
-    """Download and extract the MIRACLE database from DepositOnce.
-
-    DOI: 10.14279/depositonce-20837
-    """
-    from irdl.miracle import get_miracle
-
-    get_miracle(scenario=scenario, path=path)
+for get_dataset in (get_fabian, get_miracle):
+    doc = FunctionDoc(get_dataset)
+    sig = signature(get_dataset)
+    typer_parameters = [
+        p.replace(annotation=Annotated[p.annotation, typer.Option(help=" ".join(d.desc))])
+        for p, d in zip(sig.parameters.values(), doc["Parameters"], strict=True)
+    ]
+    get_dataset.__signature__ = sig.replace(parameters=typer_parameters)
+    app.command(
+        name=getmodule(get_dataset).__name__.split(".")[1],
+        help=doc["Summary"][0] + "\n\n" + " ".join(doc["Extended Summary"]),
+    )(get_dataset)
