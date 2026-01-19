@@ -13,7 +13,7 @@ dependencies = [
     "numba>=0.62.1",
     "numpy>=2.3.3",
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
-    "pymor>=2025.1.2",
+    "pymor@git+https://github.com/pymor/pymor.git@614767f23438e3be8c2e0530d764f345c9b3cdab",
     "scipy>=1.16.2",
 ]
 

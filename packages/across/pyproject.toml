@@ -9,7 +9,8 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
-    "pymor>=2025.1.2",
+    "pymor@git+https://github.com/pymor/pymor.git@614767f23438e3be8c2e0530d764f345c9b3cdab",
+    "rocket-fft",
 ]
 license = "MIT"
 
