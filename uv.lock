@@ -15,12 +15,14 @@ source = { editable = "packages/across" }
 dependencies = [
     { name = "pyfar" },
     { name = "pymor" },
+    { name = "rocket-fft" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=fd33a589807f75ef238c5ac7f6436276eb4503e3" },
-    { name = "pymor", specifier = ">=2025.1.2" },
+    { name = "pymor", git = "https://github.com/pymor/pymor.git?rev=614767f23438e3be8c2e0530d764f345c9b3cdab" },
+    { name = "rocket-fft" },
 ]
 
 [[package]]
@@ -789,8 +791,8 @@ wheels = [
 
 [[package]]
 name = "pymor"
-version = "2025.1.2"
-source = { registry = "https://pypi.org/simple" }
+version = "2025.1.0.dev0"
+source = { git = "https://github.com/pymor/pymor.git?rev=614767f23438e3be8c2e0530d764f345c9b3cdab#614767f23438e3be8c2e0530d764f345c9b3cdab" }
 dependencies = [
     { name = "diskcache" },
     { name = "matplotlib" },
@@ -802,10 +804,6 @@ dependencies = [
     { name = "scipy" },
     { name = "threadpoolctl" },
     { name = "typer" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/42/67/6a199ac7228eb6ba205021a3249fad1d8a5c8f1738564927e1d7494b78a1/pymor-2025.1.2.tar.gz", hash = "sha256:22e0907c6e12d73f3a9354853bdf3042763fcaf0c144f58b61e714d3012cbfe5", size = 831889 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/4b/1a58885e8d004d950b30ab71b1040742e3bf12e68ee0227a8d086546ba0b/pymor-2025.1.2-py3-none-any.whl", hash = "sha256:97791f295c36dafdc55a5c3c6cca269f4e46db0f101dd4d352aff68fee673d0c", size = 589645 },
 ]
 
 [[package]]
@@ -867,6 +865,27 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/fe/75/af448d8e52bf1d8fa6a9d089ca6c07ff4453d86c65c145d0a300bb073b9b/rich-14.1.0.tar.gz", hash = "sha256:e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8", size = 224441 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl", hash = "sha256:536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f", size = 243368 },
+]
+
+[[package]]
+name = "rocket-fft"
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numba" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/b0/09cbec3177ecf56e5ceb789a69fbcdcbabe758cbb682e5d36b14aa8c05fb/rocket_fft-0.3.1.tar.gz", hash = "sha256:ddc902a361099aff9fc02fe9ea3b0d036c2f67f93df356c2b754f7627d7fa4f4", size = 74276 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/33/1b1025d47226031616bf1ac02e63f240d02b89fe2b8462b35d1766519968/rocket_fft-0.3.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:3fa706995cebcc7bff41894e23323d2a221906454d21cb12fed97833b0f7433e", size = 359250 },
+    { url = "https://files.pythonhosted.org/packages/af/3c/371012b4ffa4697574ecfa148e8068a74e6ad57a182ec78f9b221bd4270c/rocket_fft-0.3.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:4a50609003f944aea1b8000a19f9b9cf9cbaaa5e4726e5aefaccccd1cfd81a99", size = 322700 },
+    { url = "https://files.pythonhosted.org/packages/48/2c/5bbe8d6b0c4e009f7bc6f9f4eee802a9b556ec2c3b02b9d5e5ccfa8edff1/rocket_fft-0.3.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:5906c6517fc87295a1d142c7e6ebd1c55e057f6ee4c605549bbcecacab83774f", size = 2151627 },
+    { url = "https://files.pythonhosted.org/packages/55/0d/ac67fb0b2fac382ab5585719bbd1f4927c19ba0ee3bbc28dc8a1ef83e81d/rocket_fft-0.3.1-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9d830aacc34d65b28daab715aa4a90d98489e89a48c2836039982f18ba1e2db3", size = 2160355 },
+    { url = "https://files.pythonhosted.org/packages/f8/af/0ab2b29548925c6f84607010d3bf5a928331232d1ef54f273ab9989c64c0/rocket_fft-0.3.1-cp313-cp313-win_amd64.whl", hash = "sha256:97452673ea99b907c75c99c4046d5297ea01778a6e74cb51ba515c01e3e5e5d7", size = 215172 },
+    { url = "https://files.pythonhosted.org/packages/1a/57/ca01ecc182f469425ddcd7b1a773a23c1b747465069ee5168d0c8cec2f4f/rocket_fft-0.3.1-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:284db6f40d33c3d4c7a4fef1682938b7a432ca921273d7d19e868118538d8ac4", size = 359426 },
+    { url = "https://files.pythonhosted.org/packages/78/5f/acc52602538623f8eafe11695fc1b79dc9f09611a51d159d52ba0e3ade7f/rocket_fft-0.3.1-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:d332e4ce3e4b3fcddb2a0ef0aa8337b8ab9d847d119aac470d03c7f28cbeb762", size = 322701 },
+    { url = "https://files.pythonhosted.org/packages/d5/c6/3ff33ec86e61867c0e36436eb2c9ba258eceba94419594d73ff473460e27/rocket_fft-0.3.1-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:65a7577d7f3b4e3672de179f91fee8339211b3f5ae13eef1b30cb6a318f0308c", size = 2151746 },
+    { url = "https://files.pythonhosted.org/packages/bf/d9/def65716cd225954d0cd5f1f6326c72c20601db5dc65557ef4b66157ccea/rocket_fft-0.3.1-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:97614dbebb2686a644bbf6c6f8a6198f063052f4c88901d0ca2808536c2e83cc", size = 2160407 },
+    { url = "https://files.pythonhosted.org/packages/12/90/72606ca091da7c40f72c9423bf5d27b50f7561619780586893fc43cb562f/rocket_fft-0.3.1-cp314-cp314-win_amd64.whl", hash = "sha256:3ce880c2317790410d4593d46b3a947a371abd98fc14a8ac6431694b68dfaacc", size = 218874 },
 ]
 
 [[package]]
@@ -1134,7 +1153,7 @@ requires-dist = [
     { name = "numba", specifier = ">=0.62.1" },
     { name = "numpy", specifier = ">=2.3.3" },
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=fd33a589807f75ef238c5ac7f6436276eb4503e3" },
-    { name = "pymor", specifier = ">=2025.1.2" },
+    { name = "pymor", git = "https://github.com/pymor/pymor.git?rev=614767f23438e3be8c2e0530d764f345c9b3cdab" },
     { name = "scipy", specifier = ">=1.16.2" },
 ]
 
