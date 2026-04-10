@@ -37,7 +37,6 @@ allow-direct-references = true
 
 [tool.uv.sources]
 across = { workspace = true }
-irdl = { git = "https://github.com/artpelling/irdl" }
 pyfar = { git = "https://github.com/pyfar/pyfar", rev = "fd33a589807f75ef238c5ac7f6436276eb4503e3" }
 
 [tool.uv.workspace]
