@@ -22,17 +22,19 @@ reduce-fabian = "ssm_tools.scripts.reduce_fabian:main"
 
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "src"
+module-name = "ssm_tools._rs"
 
 [dependency-groups]
 dev = [
+    "maturin>=1.13.1",
     "ruff>=0.14.8",
 ]
 
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 
 [tool.uv.sources]
