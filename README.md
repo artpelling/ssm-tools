@@ -17,3 +17,21 @@ dependencies = [
 ]
 ```
 to your `pyproject.toml` (or similarly to `requirements.txt`).
+
+### BLAS backend
+
+The Rust extension links against a BLAS implementation selected by the [`blas-src`](https://crates.io/crates/blas-src) crate. The default is **system OpenBLAS** (`openblas-src` with the `system` feature). To switch backends, edit `Cargo.toml`:
+
+| Backend | Change `blas-src` feature to | Also add |
+|---|---|---|
+| System OpenBLAS *(default)* | `openblas` | `openblas-src = { …, features = ["system"] }` |
+| Compiled OpenBLAS | `openblas` | *(remove the `openblas-src` override)* |
+| Netlib reference | `netlib` | `netlib-src = { … }` |
+| Apple Accelerate | `accelerate` | *(macOS only, no extra crate needed)* |
+| Intel MKL | `intel-mkl` | `intel-mkl-src = { … }` |
+
+For example, to use compiled OpenBLAS instead of the system library:
+```toml
+blas-src = { version = "0.14", default-features = false, features = ["openblas"] }
+# remove the openblas-src line
+```
