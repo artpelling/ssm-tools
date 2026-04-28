@@ -68,8 +68,8 @@ It implements [`pyfar`](https://pyfar.org)-compatible state-space model classes 
 
 | Class | Backend | dtypes | Status |
 |-------|---------|--------|--------|
-| `pyfar.StateSpaceModel` | NumPy | float32, float64 | baseline |
-| `StateSpaceModel` | Rust + BLAS (CBLAS `gemv`) | float32, float64 | available |
+| `pyfar.StateSpaceModel` | BLAS `gemv` via NumPy | float32, float64 | baseline |
+| `StateSpaceModel` | CBLAS `gemv` via Rust | float32, float64 | available |
 | `TriangularStateSpaceModel` | — | — | planned |
 | `DiagonalStateSpaceModel` | — | — | planned |
 
