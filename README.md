@@ -3,7 +3,7 @@
 A collection of interoperable Python packages for working with state-space models in acoustics.
 
 ```mermaid
-graph LR
+graph TD
     irdl["[irdl](https://github.com/artpelling/irdl)\nIR datasets"]
     across["[across](packages/across/README.md)\nModel reduction · ERA"]
     ssm["[ssm_tools](pyproject.toml)\nTime-domain solvers"]
