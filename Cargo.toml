@@ -11,3 +11,5 @@ crate-type = ["cdylib"]
 pyo3 = { version = "0.22", features = ["extension-module"] }
 numpy = "0.22"
 ndarray = "0.16"
+blas-src = { version = "0.14", default-features = false, features = ["openblas"] }
+openblas-src = { version = "0.10", default-features = false, features = ["system"] }
