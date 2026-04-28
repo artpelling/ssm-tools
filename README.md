@@ -3,8 +3,8 @@
 A collection of interoperable Python packages for working with state-space models in acoustics.
 
 ```mermaid
-graph TD
-    subgraph s1["Download & processing of\nIR datasets"]
+graph LR
+    subgraph s1["Download & processing of IR datasets"]
         irdl["irdl"]
     end
 
@@ -14,8 +14,8 @@ graph TD
         across["across"]
     end
 
-    subgraph s3["Online computation"]
-        direction LR
+    subgraph s3["Online computations"]
+        direction TB
         pyfar([pyfar])
         ssm["ssm_tools"]
     end
