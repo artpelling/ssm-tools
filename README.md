@@ -11,9 +11,18 @@ $$
 \end{aligned}
 $$
 
-`ssm-tools` combines multiple packages to make it easy to generate state-space models from impulse response data.
+## Ecosystem
 
-## Workflow
+We combine multiple packages to make it easy to generate state-space models from impulse response data.
+
+| Package | Description |
+|---------|-------------|
+| [`irdl`](https://artpelling.github.io/irdl/) | Downloads and processes impulse response datasets |
+| [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
+| [`ssm_tools`](pyproject.toml) | Efficient solvers for time-domain simulation of state-space models |
+
+### Workflow
+
 ```mermaid
 graph LR
     subgraph s1["Download IR datasets"]
@@ -21,6 +30,7 @@ graph LR
     end
 
     pymor([pyMOR])
+    numba([Numba])
 
     subgraph s2["Reduced-order modelling"]
         across["across"]
@@ -34,27 +44,20 @@ graph LR
 
     irdl -->|pyfar.Signal| across
     pymor -->|ERAReductor\nRandomizedERAReductor| across
+    numba --> across
     across -->|A, B, C, D| pyfar
     pyfar -->|StateSpaceModel| ssm
 
     click across "packages/across/README.md"
     click irdl "https://github.com/artpelling/irdl"
+    click numba "https://numba.pydata.org"
     click pyfar "https://pyfar.org"
     click pymor "https://pymor.org"
     click ssm "pyproject.toml"
 ```
-
-## Ecosystem Packages
-
-| Package | Description |
-|---------|-------------|
-| [`irdl`](https://artpelling.github.io/irdl/) | Downloads and processes impulse response datasets |
-| [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
-| [`ssm_tools`](pyproject.toml) | Efficient solvers for time-domain simulation of state-space models |
-
 ---
 
-## The `ssm_tools` Python package
+# The `ssm_tools` Python package
 
 It implements [`pyfar`](https://pyfar.org)-compatible state-space model classes with interchangeable solver backends. They are written in Rust and use BLAS.
 
