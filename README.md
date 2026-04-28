@@ -4,17 +4,17 @@ A collection of interoperable Python packages for working with state-space model
 
 ```mermaid
 graph LR
-    subgraph s1["Download & processing of IR datasets"]
+    subgraph s1["Download & processing\nof IR datasets"]
         irdl["irdl"]
     end
 
     pymor([pyMOR])
 
-    subgraph s2["Reduced-order modelling with ERA"]
+    subgraph s2["Reduced-order modelling\nwith ERA"]
         across["across"]
     end
 
-    subgraph s3["Online computations"]
+    subgraph s3["Online computation"]
         direction TB
         pyfar([pyfar])
         ssm["ssm_tools"]
