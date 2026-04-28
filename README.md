@@ -48,10 +48,12 @@ graph LR
 
 The discrete-time recursion solved by all backends is:
 
-```
-y[:, i] = C @ x + D @ u[:, i]
-x       = A @ x + B @ u[:, i]
-```
+$$
+\begin{aligned}
+\mathbf{x}[k+1] &= \mathbf{A}\,\mathbf{x}[k] + \mathbf{B}\,\mathbf{u}[k] \\
+\mathbf{y}[k] &= \mathbf{C}\,\mathbf{x}[k] + \mathbf{D}\,\mathbf{u}[k]
+\end{aligned}
+$$
 
 ### Solver backends
 
