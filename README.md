@@ -4,9 +4,9 @@ A collection of interoperable Python packages for working with state-space model
 
 ```mermaid
 graph TD
-    irdl["[irdl](https://github.com/artpelling/irdl)\nIR datasets"]
-    across["[across](packages/across/README.md)\nModel reduction · ERA"]
-    ssm["[ssm_tools](pyproject.toml)\nTime-domain solvers"]
+    irdl["irdl\nIR datasets"]
+    across["across\nModel reduction · ERA"]
+    ssm["ssm_tools\nTime-domain solvers"]
 
     pyfar([pyfar])
     pymor([pyMOR])
@@ -15,6 +15,12 @@ graph TD
     across -->|A, B, C, D| ssm
     pymor -->|ERAReductor| across
     pyfar -->|StateSpaceModel| ssm
+
+    click irdl "https://github.com/artpelling/irdl"
+    click across "packages/across/README.md"
+    click ssm "pyproject.toml"
+    click pyfar "https://pyfar.org"
+    click pymor "https://pymor.org"
 ```
 
 ## Packages
