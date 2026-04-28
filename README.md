@@ -31,6 +31,7 @@ graph LR
 
     pymor([pyMOR])
     numba([Numba])
+    rocket-fft([rocket-fft])
 
     subgraph s2["Reduced-order modelling"]
         across["across"]
@@ -44,13 +45,15 @@ graph LR
 
     irdl -->|pyfar.Signal| across
     pymor -->|ERAReductor\nRandomizedERAReductor| across
-    numba --> across
+    numba --> |JIT-compilation| across
+    rocket-fft --> |fast FFT| across
     across -->|A, B, C, D| pyfar
     pyfar -->|StateSpaceModel| ssm
 
     click across "packages/across/README.md"
     click irdl "https://github.com/artpelling/irdl"
     click numba "https://numba.pydata.org"
+    click rocket-fft "https://github.com/styfenschaer/rocket-fft"
     click pyfar "https://pyfar.org"
     click pymor "https://pymor.org"
     click ssm "pyproject.toml"
