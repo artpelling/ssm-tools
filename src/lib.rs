@@ -2,15 +2,13 @@ use ndarray::{Array1, ArrayView1, ArrayView2, ArrayViewMut1, ArrayViewMut2};
 use numpy::{PyReadonlyArray2, PyReadwriteArray1, PyReadwriteArray2};
 use pyo3::prelude::*;
 
-// Pull in the BLAS backend selected via blas-src (default: system OpenBLAS).
-use blas_src as _;
-
 // CBLAS order and transpose constants.
 const CBLAS_ROW_MAJOR: i32 = 101;
 const CBLAS_COL_MAJOR: i32 = 102;
 const CBLAS_NO_TRANS: i32 = 111;
 
-// Raw CBLAS bindings — symbols are provided by blas-src at link time.
+// Raw CBLAS bindings — symbols resolved at link time by the backend
+// discovered in build.rs (system OpenBLAS, conda, or macOS Accelerate).
 #[allow(non_snake_case)]
 extern "C" {
     /// y = alpha * A @ x + beta * y
