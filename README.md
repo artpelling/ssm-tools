@@ -2,6 +2,21 @@
 
 A collection of interoperable Python packages for working with state-space models in acoustics.
 
+```mermaid
+graph LR
+    irdl["[irdl](https://github.com/artpelling/irdl)\nIR datasets"]
+    across["[across](packages/across/README.md)\nModel reduction · ERA"]
+    ssm["[ssm_tools](pyproject.toml)\nTime-domain solvers"]
+
+    pyfar([pyfar])
+    pymor([pyMOR])
+
+    irdl -->|pyfar.Signal IR| across
+    across -->|A, B, C, D| ssm
+    pymor -->|ERAReductor| across
+    pyfar -->|StateSpaceModel| ssm
+```
+
 ## Packages
 
 | Package | Description |
