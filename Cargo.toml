@@ -1,0 +1,16 @@
+[package]
+name = "ssm-tools"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "ssm_tools_rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+numpy = "0.22"
+ndarray = "0.16"
+
+[build-dependencies]
+pkg-config = "0.3"
