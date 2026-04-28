@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
     "pymor@git+https://github.com/pymor/pymor.git@adaptive-era",
