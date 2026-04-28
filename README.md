@@ -109,14 +109,3 @@ sys.init_state()
 sig = Signal(np.random.randn(2, 4096), sampling_rate=44100)
 out = sys.process(sig)
 ```
-
-### Development setup
-
-The Rust extension is built with [maturin](https://github.com/PyO3/maturin), managed via [uv](https://docs.astral.sh/uv/):
-
-```sh
-git clone https://github.com/artpelling/ssm-tools
-cd ssm-tools
-uv sync
-uv run maturin develop --release
-```
