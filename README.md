@@ -9,6 +9,7 @@ graph LR
     end
 
     pymor([pyMOR])
+    pyfar([pyfar])
 
     subgraph s2["Reduced-order modelling"]
         across["across"]
@@ -16,13 +17,12 @@ graph LR
 
     subgraph s3["Online computation"]
         direction TB
-        pyfar([pyfar])
         ssm["ssm_tools"]
     end
 
     irdl -->|pyfar.Signal| across
     pymor -->|ERAReductor\nRandomizedERAReductor| across
-    across -->|StateSpaceModel| pyfar
+    pyfar -->|StateSpaceModel| across
     across -->|A, B, C, D| ssm
 
     click irdl "https://github.com/artpelling/irdl"
@@ -50,8 +50,8 @@ The discrete-time recursion solved by all backends is:
 
 $$
 \begin{aligned}
-\mathbf{x}[k+1] &= \mathbf{A}\,\mathbf{x}[k] + \mathbf{B}\,\mathbf{u}[k] \\
-\mathbf{y}[k] &= \mathbf{C}\,\mathbf{x}[k] + \mathbf{D}\,\mathbf{u}[k]
+\mathbf{x}[k+1] &= \mathbf{A}\mathbf{x}[k] + \mathbf{B}\mathbf{u}[k] \\
+\mathbf{y}[k] &= \mathbf{C}\mathbf{x}[k] + \mathbf{D}\mathbf{u}[k]
 \end{aligned}
 $$
 
