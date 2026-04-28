@@ -4,13 +4,13 @@ A collection of interoperable Python packages for working with state-space model
 
 ```mermaid
 graph LR
-    subgraph s1["Download & processing\nof IR datasets"]
+    subgraph s1["Download IR datasets"]
         irdl["irdl"]
     end
 
     pymor([pyMOR])
 
-    subgraph s2["Reduced-order modelling\nwith ERA"]
+    subgraph s2["Reduced-order modelling"]
         across["across"]
     end
 
@@ -20,8 +20,8 @@ graph LR
         ssm["ssm_tools"]
     end
 
-    irdl -->|pyfar.Signal IR| across
-    pymor -->|ERAReductor| across
+    irdl -->|pyfar.Signal| across
+    pymor -->|ERAReductor\nRandomizedERAReductor| across
     across -->|StateSpaceModel| pyfar
     across -->|A, B, C, D| ssm
 
