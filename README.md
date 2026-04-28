@@ -9,10 +9,10 @@ graph LR
     end
 
     pymor([pyMOR])
-    pyfar([pyfar])
 
     subgraph s2["Reduced-order modelling"]
         across["across"]
+        pyfar([pyfar])
     end
 
     subgraph s3["Online computation"]
@@ -22,8 +22,8 @@ graph LR
 
     irdl -->|pyfar.Signal| across
     pymor -->|ERAReductor\nRandomizedERAReductor| across
-    pyfar -->|StateSpaceModel| across
-    across -->|A, B, C, D| ssm
+    across -->|A, B, C, D| pyfar
+    pyfar -->|StateSpaceModel| ssm
 
     click irdl "https://github.com/artpelling/irdl"
     click across "packages/across/README.md"
