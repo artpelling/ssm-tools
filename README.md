@@ -1,7 +1,19 @@
-# `ssm-tools`: State-space System Modelling Tools
+# State-space System Modelling Tools
 
 A collection of interoperable Python packages for working with state-space models in acoustics.
 
+Any discrete-time LTI system can be formulated in state-space. The system's action from input u to output y is governed by the so-called state equations:
+
+$$
+\begin{aligned}
+\mathbf{x}[k+1] &= \mathbf{A}\mathbf{x}[k] + \mathbf{B}\mathbf{u}[k] \\
+\mathbf{y}[k] &= \mathbf{C}\mathbf{x}[k] + \mathbf{D}\mathbf{u}[k]
+\end{aligned}
+$$
+
+`ssm-tools` combines multiple packages to make it easy to generate state-space models from impulse response data.
+
+## Workflow
 ```mermaid
 graph LR
     subgraph s1["Download IR datasets"]
@@ -32,13 +44,13 @@ graph LR
     click pymor "https://pymor.org"
 ```
 
-## Packages
+## Ecosystem Packages
 
 | Package | Description |
 |---------|-------------|
-| [`ssm_tools`](pyproject.toml) | Fast time-domain solvers for state-space models — the main package in this repo |
-| [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
 | [`irdl`](https://github.com/artpelling/irdl) | Downloads and processes impulse response datasets |
+| [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
+| [`ssm_tools`](pyproject.toml) | Efficient solvers for time-domain simulation of state-space models |
 
 ---
 
@@ -46,14 +58,6 @@ graph LR
 
 [`pyfar`](https://pyfar.org)-compatible state-space model classes with interchangeable solver backends. Latest benchmarks: [artpelling.github.io/ssm-tools-asv](https://artpelling.github.io/ssm-tools-asv).
 
-The discrete-time recursion solved by all backends is:
-
-$$
-\begin{aligned}
-\mathbf{x}[k+1] &= \mathbf{A}\mathbf{x}[k] + \mathbf{B}\mathbf{u}[k] \\
-\mathbf{y}[k] &= \mathbf{C}\mathbf{x}[k] + \mathbf{D}\mathbf{u}[k]
-\end{aligned}
-$$
 
 ### Solver backends
 
