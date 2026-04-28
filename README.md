@@ -28,8 +28,7 @@ x       = A @ x + B @ u[:, i]
 | Class | Backend | dtypes | Status |
 |-------|---------|--------|--------|
 | `pyfar.StateSpaceModel` | NumPy | float32, float64 | baseline |
-| `NumbaStateSpaceModel` | Numba JIT | float32, float64 | available |
-| `RustStateSpaceModel` | Rust + BLAS (CBLAS `gemv`) | float32, float64 | available |
+| `StateSpaceModel` | Rust + BLAS (CBLAS `gemv`) | float32, float64 | available |
 | `TriangularStateSpaceModel` | — | — | planned |
 | `DiagonalStateSpaceModel` | — | — | planned |
 
@@ -58,20 +57,16 @@ pip install git+https://github.com/artpelling/ssm-tools
 ```python
 import numpy as np
 from pyfar import Signal
-from pyfar.classes.filter import StateSpaceModel
-from ssm_tools.models import RustStateSpaceModel, NumbaStateSpaceModel
+from ssm_tools.models import StateSpaceModel
 
 # Build a system (n states, m inputs, p outputs)
 A, B, C = np.eye(100) * 0.9, np.random.randn(100, 2), np.random.randn(4, 100)
 sys = StateSpaceModel(A, B, C, sampling_rate=44100, dtype=np.float32)
-
-# Wrap with a fast backend
-rust_sys = RustStateSpaceModel.from_pyfar(sys, storage="F")
-rust_sys.init_state()
+sys.init_state()
 
 # Process a signal — returns a pyfar.Signal
 sig = Signal(np.random.randn(2, 4096), sampling_rate=44100)
-out = rust_sys.process(sig)
+out = sys.process(sig)
 ```
 
 ### Development setup
