@@ -1,41 +1,13 @@
-[project]
-name = "ssm-tools"
-version = "0.1.0"
-description = "State-space systems for acoustic systems."
-readme = "README.md"
-authors = [
-    { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
-]
-requires-python = ">=3.12"
-dependencies = [
-    "numpy>=2.3.3",
-    "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
-]
-[project.optional-dependencies]
-full = ["across", "irdl"]
-
-
-[project.scripts]
-reduce-fabian = "ssm_tools.scripts.reduce_fabian:main"
-
-
-[build-system]
-requires = ["maturin>=1.0,<2.0", "numpy>=2"]
-build-backend = "maturin"
-
-[tool.maturin]
-python-source = "src"
-module-name = "ssm_tools._rs"
-
 [dependency-groups]
 dev = [
-    "maturin>=1.13.1",
     "ruff>=0.14.8",
 ]
 
 
 [tool.uv.sources]
 across = { workspace = true }
+ssmsolve = { workspace = true }
+ssmsolvers = { path = "../ssmsolvers" }
 pyfar = { git = "https://github.com/pyfar/pyfar", rev = "fd33a589807f75ef238c5ac7f6436276eb4503e3" }
 
 [tool.uv.workspace]

@@ -13,13 +13,12 @@ $$
 
 ## Ecosystem
 
-We combine multiple packages to make it easy to generate state-space models from impulse response data.
-
 | Package | Description |
 |---------|-------------|
 | [`irdl`](https://artpelling.github.io/irdl/) | Downloads and processes impulse response datasets |
 | [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
-| [`ssm_tools`](pyproject.toml) | Efficient solvers for time-domain simulation of state-space models |
+| [`ssmsolvers`](https://github.com/artpelling/ssmsolvers) | BLAS-accelerated Rust solvers for discrete-time state-space recursion |
+| [`ssmsolve`](packages/ssmsolve/README.md) | Python state-space model classes backed by `ssmsolvers` |
 
 ### Workflow
 
@@ -40,7 +39,8 @@ graph LR
 
     subgraph s3["Online computation"]
         direction TB
-        ssm["ssm_tools"]
+        ssmsolvers["ssmsolvers"]
+        ssmsolve["ssmsolve"]
     end
 
     irdl -->|pyfar.Signal| across
@@ -48,64 +48,16 @@ graph LR
     numba --> |JIT-compilation| across
     rocket-fft --> |fast FFT| across
     across -->|A, B, C, D| pyfar
-    pyfar -->|StateSpaceModel| ssm
+    pyfar -->|StateSpaceModel| ssmsolve
+    ssmsolvers -->|solve_f32\nsolve_f64| ssmsolve
 
     click across "packages/across/README.md"
+    click ssmsolve "packages/ssmsolve/README.md"
+    click ssmsolvers "https://github.com/artpelling/ssmsolvers"
     click irdl "https://github.com/artpelling/irdl"
     click numba "https://numba.pydata.org"
     click rocket-fft "https://github.com/styfenschaer/rocket-fft"
     click pyfar "https://pyfar.org"
     click pymor "https://pymor.org"
-    click ssm "pyproject.toml"
-```
----
-
-# The `ssm_tools` Python package
-
-It implements [`pyfar`](https://pyfar.org)-compatible state-space model classes with interchangeable solver backends. They are written in Rust and use BLAS.
-
-### Solver backends
-
-| Class | Backend | dtypes | Status |
-|-------|---------|--------|--------|
-| `pyfar.StateSpaceModel` | BLAS `gemv` via NumPy | float32, float64 | baseline |
-| `StateSpaceModel` | CBLAS `gemv` via Rust | float32, float64 | available |
-| `TriangularStateSpaceModel` | — | — | planned |
-| `DiagonalStateSpaceModel` | — | — | planned |
-
-All classes accept a `storage` parameter (`'F'` column-major or `'C'` row-major) that controls the memory layout of the system matrices. The system state `x` is updated in place across calls, so sequential chunk processing preserves state.
-
-### Installation
-
-Add to your `pyproject.toml`:
-
-```toml
-dependencies = [
-    "ssm_tools @ git+https://github.com/artpelling/ssm-tools"
-]
 ```
 
-or install directly:
-
-```sh
-pip install git+https://github.com/artpelling/ssm-tools
-```
-
-> **Note:** `ssm_tools` contains a Rust extension that requires an LP64 CBLAS library at build time. On most systems this is resolved automatically. See [BLAS.md](BLAS.md) for details.
-
-### Quick start
-
-```python
-import numpy as np
-from pyfar import Signal
-from ssm_tools.models import StateSpaceModel
-
-# Build a system (n states, m inputs, p outputs)
-A, B, C = np.eye(100) * 0.9, np.random.randn(100, 2), np.random.randn(4, 100)
-sys = StateSpaceModel(A, B, C, sampling_rate=44100, dtype=np.float32)
-sys.init_state()
-
-# Process a signal — returns a pyfar.Signal
-sig = Signal(np.random.randn(2, 4096), sampling_rate=44100)
-out = sys.process(sig)
-```

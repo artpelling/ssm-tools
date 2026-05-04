@@ -17,17 +17,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          path: ssm-tools
+
+      - uses: actions/checkout@v6
+        with:
+          repository: artpelling/ssmsolvers
+          path: ssmsolvers
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ matrix.python-version }}
 
-      # BLAS setup — platform-specific.
-      # Linux: libopenblas-dev exposes a pkg-config entry picked up by build.rs.
-      # macOS: build.rs links the Accelerate framework automatically — no setup needed.
-      # Windows: vcpkg provides MSVC-compatible import libraries; BLAS_LIB_DIR
-      #          triggers the env-override branch in build.rs (step 1 of 4).
       - name: Install OpenBLAS (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libopenblas-dev patchelf
@@ -40,8 +42,19 @@ jobs:
           "BLAS_LIB_DIR=C:\vcpkg\installed\x64-windows\lib" | Out-File -FilePath $env:GITHUB_ENV -Append
           "C:\vcpkg\installed\x64-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Build Rust extension
-        run: uv run maturin build --release
+      - name: Build ssmsolvers wheel
+        working-directory: ssmsolvers
+        run: uv run maturin build --release --out dist
 
-      - name: Smoke test
-        run: uv run --isolated --no-project --with target/wheels/*.whl python -c "from ssm_tools._rs import solve_f32, solve_f64; print('OK')"
+      - name: Smoke test ssmsolvers
+        working-directory: ssmsolvers
+        run: uv run --isolated --no-project --with dist/*.whl python -c "from ssmsolvers import solve_f32, solve_f64; print('ssmsolvers OK')"
+
+      - name: Install ssmsolve workspace
+        working-directory: ssm-tools
+        run: uv sync --all-packages --no-install-package ssmsolvers
+
+      - name: Smoke test ssmsolve
+        working-directory: ssm-tools
+        run: uv run --isolated --no-project --with ../ssmsolvers/dist/*.whl --with packages/ssmsolve python -c "from ssmsolve.models import StateSpaceModel; print('ssmsolve OK')"
+

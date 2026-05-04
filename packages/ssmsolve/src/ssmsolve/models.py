@@ -3,7 +3,7 @@
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel as PyfarStateSpaceModel
 
-from ssm_tools._rs import solve_f32, solve_f64
+from ssmsolvers import solve_f32, solve_f64
 
 
 class StateSpaceModel(PyfarStateSpaceModel):
@@ -85,7 +85,7 @@ class StateSpaceModel(PyfarStateSpaceModel):
 
         Returns
         -------
-        RustStateSpaceModel
+        StateSpaceModel
         """
         return cls(
             A=sys._A,
