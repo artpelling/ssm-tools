@@ -55,6 +55,7 @@ STORAGE_IDS = ["fortran", "c-order"]
 # Pyfar (scipy BLAS) backend
 # ---------------------------------------------------------------------------
 
+
 class TestPyfarBackend:
     @pytest.mark.parametrize("dtype", DTYPES, ids=DTYPE_IDS)
     @pytest.mark.parametrize("storage", STORAGES, ids=STORAGE_IDS)
@@ -80,10 +81,12 @@ class TestPyfarBackend:
 # Numba backend
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(autouse=False)
 def numba_backend():
     pytest.importorskip("numba", reason="numba not installed")
     from ssmsolve.backends.numba import solve
+
     orig = _m._backend_solve
     _m._backend_solve = solve
     yield
@@ -97,6 +100,7 @@ class TestNumbaBackend:
         sys, sig = _make_system(dtype=dtype, storage=storage)
         ref = _pyfar_reference(sys, sig)
         from ssmsolve.backends.numba import solve
+
         _m._backend_solve = solve
         sys.init_state()
         out = sys.process(sig).time
@@ -117,10 +121,12 @@ class TestNumbaBackend:
 # Rust backend
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(autouse=False)
 def rust_backend():
     pytest.importorskip("ssmsolve_rs", reason="ssmsolve-rs not installed")
     from ssmsolve.backends.rust import solve
+
     orig = _m._backend_solve
     _m._backend_solve = solve
     yield
@@ -134,6 +140,7 @@ class TestRustBackend:
         sys, sig = _make_system(dtype=dtype, storage=storage)
         ref = _pyfar_reference(sys, sig)
         from ssmsolve.backends.rust import solve
+
         _m._backend_solve = solve
         sys.init_state()
         out = sys.process(sig).time

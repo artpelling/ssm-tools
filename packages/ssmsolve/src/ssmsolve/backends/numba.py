@@ -7,8 +7,24 @@ from numba import float32, float64, jit
 
 @jit(
     [
-        (float32[::1, :], float32[::1], float32[::1, :], float32[::1, :], float32[::1, :], float32[::1, :], float32[::1, :]),
-        (float64[::1, :], float64[::1], float64[::1, :], float64[::1, :], float64[::1, :], float64[::1, :], float64[::1, :]),
+        (
+            float32[::1, :],
+            float32[::1],
+            float32[::1, :],
+            float32[::1, :],
+            float32[::1, :],
+            float32[::1, :],
+            float32[::1, :],
+        ),
+        (
+            float64[::1, :],
+            float64[::1],
+            float64[::1, :],
+            float64[::1, :],
+            float64[::1, :],
+            float64[::1, :],
+            float64[::1, :],
+        ),
     ],
     nopython=True,
     cache=True,
@@ -22,8 +38,24 @@ def solve_F(y, x, A, B, C, D, u):
 
 @jit(
     [
-        (float32[:, ::1], float32[::1], float32[:, ::1], float32[:, ::1], float32[:, ::1], float32[:, ::1], float32[:, ::1]),
-        (float64[:, ::1], float64[::1], float64[:, ::1], float64[:, ::1], float64[:, ::1], float64[:, ::1], float64[:, ::1]),
+        (
+            float32[:, ::1],
+            float32[::1],
+            float32[:, ::1],
+            float32[:, ::1],
+            float32[:, ::1],
+            float32[:, ::1],
+            float32[:, ::1],
+        ),
+        (
+            float64[:, ::1],
+            float64[::1],
+            float64[:, ::1],
+            float64[:, ::1],
+            float64[:, ::1],
+            float64[:, ::1],
+            float64[:, ::1],
+        ),
     ],
     nopython=True,
     cache=True,
