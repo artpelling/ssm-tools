@@ -15,10 +15,7 @@ dependencies = [
 [project.optional-dependencies]
 rust = ["ssmsolve-rs"]
 jit = ["numba"]
-full = ["across", "irdl", "ssmsolve[rust,jit]"]
-
-[project.scripts]
-reduce-fabian = "ssmsolve.scripts.reduce_fabian:main"
+full = ["ssmsolve[rust,jit]"]
 
 [build-system]
 requires = ["hatchling"]
