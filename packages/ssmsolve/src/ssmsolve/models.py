@@ -3,11 +3,24 @@
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel as PyfarStateSpaceModel
 
-from ssmsolve_rs import solve_f32, solve_f64
+from ssmsolve.backends import BACKEND, _solver as _backend_solve
 
 
 class StateSpaceModel(PyfarStateSpaceModel):
-    """State-space model with a Rust solver backend.
+    """State-space model with pluggable solver backend.
+
+    The active backend is selected at import time in priority order:
+    ``rust`` (ssmsolve-rs) → ``numba`` (numba) → ``numpy`` (pure fallback).
+    Install the appropriate extra to enable a backend:
+
+    .. code-block:: bash
+
+        pip install ssmsolve[rust]   # CBLAS via Rust extension
+        pip install ssmsolve[jit]    # Numba JIT
+
+    Without either extra the pyfar BLAS solver (scipy ``gemv``) is used as a fallback.
+    The active backend name is available as :data:`ssmsolve.BACKEND`.
+
 
     The solver computes the discrete-time state equations:
 
@@ -98,15 +111,14 @@ class StateSpaceModel(PyfarStateSpaceModel):
         )
 
     def _process(self, u):
+        if _backend_solve is None:
+            return super(StateSpaceModel, self)._process(u)
         y = np.zeros((self.n_outputs, u.shape[1]), self.dtype, order=self.storage)
         if self.storage == "F":
             u = np.asfortranarray(u, dtype=self.dtype)
         else:
             u = np.ascontiguousarray(u, dtype=self.dtype)
-        if self._dtype == np.dtype(np.float32):
-            solve_f32(y, self.state, self._A, self._B, self._C, self._D, u)
-        else:
-            solve_f64(y, self.state, self._A, self._B, self._C, self._D, u)
+        _backend_solve(y, self.state, self._A, self._B, self._C, self._D, u)
         return y
 
 

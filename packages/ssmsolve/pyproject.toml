@@ -10,11 +10,12 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy>=2",
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
-    "ssmsolve-rs",
 ]
 
 [project.optional-dependencies]
-full = ["across", "irdl"]
+rust = ["ssmsolve-rs"]
+jit = ["numba"]
+full = ["across", "irdl", "ssmsolve[rust,jit]"]
 
 [project.scripts]
 reduce-fabian = "ssmsolve.scripts.reduce_fabian:main"

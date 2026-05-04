@@ -1446,24 +1446,33 @@ source = { editable = "packages/ssmsolve" }
 dependencies = [
     { name = "numpy" },
     { name = "pyfar" },
-    { name = "ssmsolve-rs" },
 ]
 
 [package.optional-dependencies]
 full = [
     { name = "across" },
     { name = "irdl" },
+    { name = "numba" },
+    { name = "ssmsolve-rs" },
+]
+jit = [
+    { name = "numba" },
+]
+rust = [
+    { name = "ssmsolve-rs" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "across", marker = "extra == 'full'", editable = "packages/across" },
     { name = "irdl", marker = "extra == 'full'" },
+    { name = "numba", marker = "extra == 'jit'" },
     { name = "numpy", specifier = ">=2" },
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=fd33a589807f75ef238c5ac7f6436276eb4503e3" },
-    { name = "ssmsolve-rs", editable = "packages/ssmsolve-rs" },
+    { name = "ssmsolve", extras = ["rust", "jit"], marker = "extra == 'full'", editable = "packages/ssmsolve" },
+    { name = "ssmsolve-rs", marker = "extra == 'rust'", editable = "packages/ssmsolve-rs" },
 ]
-provides-extras = ["full"]
+provides-extras = ["rust", "jit", "full"]
 
 [[package]]
 name = "ssmsolve-rs"
