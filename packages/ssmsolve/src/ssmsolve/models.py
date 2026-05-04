@@ -63,19 +63,23 @@ class StateSpaceModel(PyfarStateSpaceModel):
         assert B.shape[0] == A.shape[0], f"B needs to be of shape ({A.shape[0]}, m)."
         assert C.shape[1] == A.shape[0], f"C needs to be of shape (p, {A.shape[0]})."
         assert D.shape == (C.shape[0], B.shape[1]), f"D needs to be of shape ({C.shape[0], B.shape[1]})."
+        # call _LTIModel constructor to avoid typecasting
+        super(PyfarStateSpaceModel, self).__init__(sampling_rate=sampling_rate, state=state, comment=comment)
         dtype = np.result_type(A, B, C, D) if dtype is None else np.dtype(dtype)
-        if dtype not in self._SUPPORTED_DTYPES:
-            raise TypeError(f"StateSpaceModel only supports float32 and float64, got {dtype}.")
-        A, B, C, D = (
-            A.astype(dtype, order=storage),
-            B.astype(dtype, order=storage),
-            C.astype(dtype, order=storage),
-            D.astype(dtype, order=storage),
-        )
-        super(StateSpaceModel, self).__init__(
-            A, B, C, D, sampling_rate=sampling_rate, state=state, dtype=dtype, comment=comment
-        )
-        self._A, self._B, self._C, self._D, self._dtype, self._storage = A, B, C, D, dtype, storage
+        self._A, self._B, self._C, self._D, self.dtype = A, B, C, D, dtype
+        # storage setter does the typecast
+        self.storage = storage
+
+    @property
+    def dtype(self):
+        """Get the data type of the system matrices."""
+        return self._dtype
+
+    @dtype.setter
+    def dtype(self, value):
+        if value not in self._SUPPORTED_DTYPES:
+            raise TypeError(f"StateSpaceModel only supports float32 and float64, got {value}.")
+        self._dtype = value
 
     @property
     def storage(self):
@@ -85,6 +89,12 @@ class StateSpaceModel(PyfarStateSpaceModel):
     @storage.setter
     def storage(self, value):
         assert value in ("F", "C"), "Storage must be either 'F' (Fortran) or 'C' (Contiguous)."
+        self._A, self._B, self._C, self._D = (
+            self._A.astype(self.dtype, order=value),
+            self._B.astype(self.dtype, order=value),
+            self._C.astype(self.dtype, order=value),
+            self._D.astype(self.dtype, order=value),
+        )
         self._storage = value
 
     @classmethod
