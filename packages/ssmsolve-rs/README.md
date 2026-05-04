@@ -10,7 +10,9 @@ y[:, i] = C @ x + D @ u[:, i]
 x       = A @ x + B @ u[:, i]
 ```
 
-using `cblas_sgemv` / `cblas_dgemv` for both `float32` and `float64` arrays.
+Dispatches between Fortran BLAS (`sgemv_`/`dgemv_`) for F-order (column-major) arrays
+and CBLAS (`cblas_sgemv`/`cblas_dgemv`) for C-order (row-major) arrays.
+Supports `float32` and `float64`.
 
 ## Installation
 
@@ -36,7 +38,7 @@ from ssmsolve_rs import solve_f32, solve_f64
 ## Building from source
 
 ```sh
-pip install maturin
-maturin develop --release
+uv sync
+uv run maturin build --release --manifest-path packages/ssmsolve-rs/Cargo.toml --out packages/ssmsolve-rs/dist
 ```
 

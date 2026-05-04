@@ -48,7 +48,7 @@ out = sys.process(sig)
 
 | Backend | Extra | Solver | dtypes |
 |---------|-------|--------|--------|
-| `"rust"` | `ssmsolve[rust]` | CBLAS `gemv` via `ssmsolve-rs` | float32, float64 |
+| `"rust"` | `ssmsolve[rust]` | Fortran BLAS `gemv` (F-order) / CBLAS `gemv` (C-order) via `ssmsolve-rs` | float32, float64 |
 | `"numba"` | `ssmsolve[jit]` | Numba `@jit(nopython=True)` | float32, float64 |
 | `"pyfar"` | *(fallback)* | `scipy.linalg gemv` (BLAS) | float32, float64 |
 
