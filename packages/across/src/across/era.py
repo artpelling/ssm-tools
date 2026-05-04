@@ -1,7 +1,6 @@
 import numpy as np
-
-from pymor.reductors.era import ERAReductor, RandomizedERAReductor
 from pymor.algorithms.rand_la import RandomizedRangeFinder
+from pymor.reductors.era import ERAReductor, RandomizedERAReductor
 
 from across.fastoperators import NumbaHankelOperator
 
@@ -53,7 +52,7 @@ class _NumbaRandomizedERAReductor(RandomizedERAReductor):
         force_stability=True,
         feedthrough=None,
         allow_transpose=True,
-        rrf_opts={},
+        rrf_opts={},  # noqa: B006
         num_left=None,
         num_right=None,
     ):
@@ -93,7 +92,7 @@ class _NumbaRandomizedERAReductor(RandomizedERAReductor):
         dtype = self.data.dtype
         V = np.zeros((self._H._circulant.source.dim, num), dtype=dtype)
         V[: self._H.source.dim] = self._H.source.random(num, distribution="normal").to_numpy()
-        return self._H.range.make_array(self._H._circulant._circular_matvec(V)[:self._H.range.dim])
+        return self._H.range.make_array(self._H._circulant._circular_matvec(V)[: self._H.range.dim])
 
 
 class RandomizedERA(ERA):

@@ -3,7 +3,7 @@
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel as PyfarStateSpaceModel
 
-from ssmsolve.backends import BACKEND, _solver as _backend_solve
+from ssmsolve.backends import _solver as _backend_solve
 
 
 class StateSpaceModel(PyfarStateSpaceModel):
@@ -72,7 +72,9 @@ class StateSpaceModel(PyfarStateSpaceModel):
             C.astype(dtype, order=storage),
             D.astype(dtype, order=storage),
         )
-        super(StateSpaceModel, self).__init__(A, B, C, D, sampling_rate=sampling_rate, state=state, dtype=dtype, comment=comment)
+        super(StateSpaceModel, self).__init__(
+            A, B, C, D, sampling_rate=sampling_rate, state=state, dtype=dtype, comment=comment
+        )
         self._A, self._B, self._C, self._D, self._dtype, self._storage = A, B, C, D, dtype, storage
 
     @property

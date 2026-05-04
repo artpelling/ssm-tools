@@ -29,8 +29,9 @@ quote-style = "double"
 [tool.ruff.lint]
 select = ["B", "D", "E", "F", "I", "ICN", "N", "Q", "W"]
 ignore = [
-    "D100", "D104", "D401",
-    "N803",
+    "D100", "D101", "D102", "D104", "D401",
+    "E741",
+    "N803", "N806",
 ]
 
 [tool.ruff.lint.pycodestyle]
