@@ -65,7 +65,7 @@ jobs:
         run: uv run maturin build --release --manifest-path packages/ssmsolve-rs/Cargo.toml --out packages/ssmsolve-rs/dist
 
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ssmsolve-rs-${{ matrix.os }}-py${{ matrix.python-version }}
           path: packages/ssmsolve-rs/dist/*.whl
@@ -98,7 +98,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Download ssmsolve-rs wheel
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ssmsolve-rs-ubuntu-latest-py${{ matrix.python-version }}
           path: packages/ssmsolve-rs/dist
