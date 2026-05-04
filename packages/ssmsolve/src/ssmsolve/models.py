@@ -3,7 +3,7 @@
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel as PyfarStateSpaceModel
 
-from ssmsolvers import solve_f32, solve_f64
+from ssmsolve_rs import solve_f32, solve_f64
 
 
 class StateSpaceModel(PyfarStateSpaceModel):

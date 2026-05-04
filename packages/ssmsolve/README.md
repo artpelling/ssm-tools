@@ -1,7 +1,7 @@
 # `ssmsolve`
 
 Python package for time-domain simulation of discrete-time state-space models, backed by
-[`ssmsolvers`](https://github.com/artpelling/ssmsolvers) (BLAS-accelerated Rust extension).
+[`ssmsolve-rs`](https://github.com/artpelling/ssm-tools/tree/main/packages/ssmsolve-rs) (BLAS-accelerated Rust extension).
 
 ## Installation
 
@@ -33,7 +33,7 @@ out = sys.process(sig)
 | Class | Backend | dtypes | Status |
 |-------|---------|--------|--------|
 | `pyfar.StateSpaceModel` | BLAS `gemv` via NumPy | float32, float64 | baseline |
-| `StateSpaceModel` | CBLAS `gemv` via `ssmsolvers` | float32, float64 | available |
+| `StateSpaceModel` | CBLAS `gemv` via `ssmsolve-rs` | float32, float64 | available |
 | `TriangularStateSpaceModel` | — | — | planned |
 | `DiagonalStateSpaceModel` | — | — | planned |
 

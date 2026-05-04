@@ -1,0 +1,18 @@
+[project]
+name = "ssmsolve-rs"
+version = "0.1.0"
+description = "High-performance BLAS-backed state-space solvers for ssmsolve."
+readme = "README.md"
+authors = [
+    { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
+]
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = []
+
+[build-system]
+requires = ["maturin>=1.0,<2.0", "numpy>=2"]
+build-backend = "maturin"
+
+[tool.maturin]
+module-name = "ssmsolve_rs"

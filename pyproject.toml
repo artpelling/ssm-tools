@@ -7,7 +7,7 @@ dev = [
 [tool.uv.sources]
 across = { workspace = true }
 ssmsolve = { workspace = true }
-ssmsolvers = { path = "../ssmsolvers" }
+ssmsolve-rs = { workspace = true }
 pyfar = { git = "https://github.com/pyfar/pyfar", rev = "fd33a589807f75ef238c5ac7f6436276eb4503e3" }
 
 [tool.uv.workspace]

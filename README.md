@@ -17,8 +17,8 @@ $$
 |---------|-------------|
 | [`irdl`](https://artpelling.github.io/irdl/) | Downloads and processes impulse response datasets |
 | [`across`](packages/across/README.md) | Reduced-order state-space models from impulse response data via ERA |
-| [`ssmsolvers`](https://github.com/artpelling/ssmsolvers) | BLAS-accelerated Rust solvers for discrete-time state-space recursion |
-| [`ssmsolve`](packages/ssmsolve/README.md) | Python state-space model classes backed by `ssmsolvers` |
+| [`ssmsolve`](packages/ssmsolve/README.md) | Python state-space model classes backed by `ssmsolve-rs` |
+| [`ssmsolve-rs`](packages/ssmsolve-rs/README.md) | BLAS-accelerated Rust solvers for discrete-time state-space recursion |
 
 ### Workflow
 
@@ -39,7 +39,7 @@ graph LR
 
     subgraph s3["Online computation"]
         direction TB
-        ssmsolvers["ssmsolvers"]
+        ssmsolve-rs["ssmsolve-rs"]
         ssmsolve["ssmsolve"]
     end
 
@@ -49,11 +49,11 @@ graph LR
     rocket-fft --> |fast FFT| across
     across -->|A, B, C, D| pyfar
     pyfar -->|StateSpaceModel| ssmsolve
-    ssmsolvers -->|solve_f32\nsolve_f64| ssmsolve
+    ssmsolve-rs -->|solve_f32\nsolve_f64| ssmsolve
 
     click across "packages/across/README.md"
     click ssmsolve "packages/ssmsolve/README.md"
-    click ssmsolvers "https://github.com/artpelling/ssmsolvers"
+    click ssmsolve-rs "packages/ssmsolve-rs/README.md"
     click irdl "https://github.com/artpelling/irdl"
     click numba "https://numba.pydata.org"
     click rocket-fft "https://github.com/styfenschaer/rocket-fft"
