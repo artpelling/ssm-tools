@@ -1,12 +1,12 @@
 [project]
 name = "ssm-tools"
 version = "0.1.0"
-description = "Python toolbox for state-space systems of acoustic systems."
+description = "State-space systems for acoustic systems."
 readme = "README.md"
 authors = [
     { name = "Art Pelling", email = "a.pelling@tu-berlin.de" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.3.3",
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-models",
