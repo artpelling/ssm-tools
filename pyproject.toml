@@ -1,6 +1,7 @@
 [dependency-groups]
 dev = [
-    "maturin[patchelf]>=1.0,<2.0",
+    "maturin[patchelf]>=1.0,<2.0; sys_platform == 'linux'",
+    "maturin>=1.0,<2.0; sys_platform != 'linux'",
     "ruff>=0.14.8",
 ]
 
