@@ -1,4 +1,4 @@
-use ndarray::{Array1, ArrayView1, ArrayView2, ArrayViewMut1, ArrayViewMut2};
+use numpy::ndarray::{Array1, ArrayView1, ArrayView2, ArrayViewMut1, ArrayViewMut2};
 use numpy::{PyReadonlyArray2, PyReadwriteArray1, PyReadwriteArray2};
 use pyo3::prelude::*;
 
@@ -10,7 +10,7 @@ const CBLAS_NO_TRANS: i32 = 111;
 // Raw CBLAS bindings — symbols resolved at link time by the backend
 // discovered in build.rs (system OpenBLAS, conda, or macOS Accelerate).
 #[allow(non_snake_case)]
-extern "C" {
+unsafe extern "C" {
     /// y = alpha * A @ x + beta * y
     fn cblas_sgemv(
         order: i32, trans: i32, m: i32, n: i32,
@@ -52,9 +52,8 @@ unsafe fn sgemv(
     // incx/incy must match the actual element strides of x and y.
     let incx = x.strides()[0] as i32;
     let incy = y.strides()[0] as i32;
-    cblas_sgemv(order, CBLAS_NO_TRANS, m, n, alpha, a.as_ptr(), lda, x.as_ptr(), incx, beta, y.as_mut_ptr(), incy);
+    unsafe { cblas_sgemv(order, CBLAS_NO_TRANS, m, n, alpha, a.as_ptr(), lda, x.as_ptr(), incx, beta, y.as_mut_ptr(), incy) };
 }
-
 /// Compute `y = alpha * A @ x + beta * y` via BLAS DGEMV.
 #[inline]
 unsafe fn dgemv(
@@ -73,7 +72,7 @@ unsafe fn dgemv(
     };
     let incx = x.strides()[0] as i32;
     let incy = y.strides()[0] as i32;
-    cblas_dgemv(order, CBLAS_NO_TRANS, m, n, alpha, a.as_ptr(), lda, x.as_ptr(), incx, beta, y.as_mut_ptr(), incy);
+    unsafe { cblas_dgemv(order, CBLAS_NO_TRANS, m, n, alpha, a.as_ptr(), lda, x.as_ptr(), incx, beta, y.as_mut_ptr(), incy) };
 }
 
 /// Run the discrete-time state-space recursion for `f32` arrays.
