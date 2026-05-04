@@ -197,6 +197,7 @@ fn solve_f64<'py>(
     sig: PyReadonlyArray2<'py, f64>,
 ) -> PyResult<()> {
     let a_arr = a.as_array();
+    // Dispatch on A's layout; all system matrices share the same storage order.
     if a_arr.strides()[0] == 1 {
         solve_f64_f_inner(out.as_array_mut(), x.as_array_mut(), a_arr, b.as_array(), c.as_array(), d.as_array(), sig.as_array());
     } else {

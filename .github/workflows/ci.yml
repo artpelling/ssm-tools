@@ -72,7 +72,9 @@ jobs:
           if-no-files-found: error
 
       - name: Smoke test ssmsolve-rs
-        run: uv run --isolated --no-project --with packages/ssmsolve-rs/dist/*.whl python -c "from ssmsolve_rs import solve_f32, solve_f64; print('ssmsolve-rs OK')"
+        run: |
+          uv run --isolated --no-project python -m pip install packages/ssmsolve-rs/dist/*.whl
+          uv run --isolated --no-project python -c "from ssmsolve_rs import solve_f32, solve_f64; print('ssmsolve-rs OK')"
 
       - name: Smoke test ssmsolve
         run: uv run --isolated --no-project --with packages/ssmsolve-rs/dist/*.whl --with packages/ssmsolve python -c "from ssmsolve.models import StateSpaceModel; print('ssmsolve OK')"
