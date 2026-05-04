@@ -16,7 +16,7 @@ $$
 | Package | Description |
 |---------|-------------|
 | [`irdl`](https://artpelling.github.io/irdl/) | Downloads and processes impulse response datasets |
-| [`across`](packages/across/) | Reduced-order state-space models from impulse response data via ERA |
+| [`across`](packages/across/) | Construct reduced order state-space models from impulse response data via ERA |
 | [`ssmsolve`](packages/ssmsolve/) | Python state-space model classes with pluggable solver backends |
 | [`ssmsolve-rs`](packages/ssmsolve-rs/) | BLAS-accelerated Rust solvers for discrete-time state-space recursion |
 
