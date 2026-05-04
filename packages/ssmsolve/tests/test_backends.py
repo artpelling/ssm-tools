@@ -7,11 +7,9 @@ _backend_solve_F/_backend_solve_C in ssmsolve.models. Both storage orders
 
 import numpy as np
 import pytest
-from pyfar import Signal
-
 import ssmsolve.models as _m
+from pyfar import Signal
 from ssmsolve.models import StateSpaceModel
-
 
 # ---------------------------------------------------------------------------
 # Helpers
