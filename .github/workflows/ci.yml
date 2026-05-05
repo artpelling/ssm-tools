@@ -51,7 +51,7 @@ jobs:
       #          triggers the env-override branch in build.rs (step 1 of 4).
       - name: Install OpenBLAS (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y libopenblas-dev patchelf
+        run: sudo apt-get install -y libopenblas-dev
 
       - name: Install OpenBLAS (Windows)
         if: runner.os == 'Windows'
@@ -62,21 +62,38 @@ jobs:
           "C:\vcpkg\installed\x64-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Build ssmsolve-rs wheel
-        working-directory: packages/ssmsolve-rs
-        run: uv run maturin build --release --out dist
+        run: uv run maturin build --release --manifest-path packages/ssmsolve-rs/Cargo.toml --out packages/ssmsolve-rs/dist --auditwheel=repair
 
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ssmsolve-rs-${{ matrix.os }}-py${{ matrix.python-version }}
           path: packages/ssmsolve-rs/dist/*.whl
           if-no-files-found: error
 
-      - name: Smoke test ssmsolve-rs
+      - name: Smoke test ssmsolve-rs (normal OS)
+        if: runner.os != 'Windows'
         run: uv run --isolated --no-project --with packages/ssmsolve-rs/dist/*.whl python -c "from ssmsolve_rs import solve_f32, solve_f64; print('ssmsolve-rs OK')"
 
-      - name: Smoke test ssmsolve
+      - name: Smoke test ssmsolve-rs (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $wheel = Get-ChildItem packages/ssmsolve-rs/dist/*.whl | Select-Object -First 1
+          if (-not $wheel) { throw "No wheel found in packages/ssmsolve-rs/dist" }
+          uv run --isolated --no-project --with $wheel.FullName python -c "from ssmsolve_rs import solve_f32, solve_f64; print('ssmsolve-rs OK')"
+
+      - name: Smoke test ssmsolve (normal OS)
+        if: runner.os != 'Windows'
         run: uv run --isolated --no-project --with packages/ssmsolve-rs/dist/*.whl --with packages/ssmsolve python -c "from ssmsolve.models import StateSpaceModel; print('ssmsolve OK')"
+
+      - name: Smoke test ssmsolve (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $wheel = Get-ChildItem packages/ssmsolve-rs/dist/*.whl | Select-Object -First 1
+          if (-not $wheel) { throw "No wheel found in packages/ssmsolve-rs/dist" }
+          uv run --isolated --no-project --with $wheel.FullName --with packages/ssmsolve python -c "from ssmsolve.models import StateSpaceModel; print('ssmsolve OK')"
 
   # ---------------------------------------------------------------------------
   # Tests — depends on build, reuses ubuntu wheel artifacts
@@ -99,7 +116,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Download ssmsolve-rs wheel
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ssmsolve-rs-ubuntu-latest-py${{ matrix.python-version }}
           path: packages/ssmsolve-rs/dist

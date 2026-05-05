@@ -48,7 +48,7 @@ out = sys.process(sig)
 
 | Backend | Extra | Solver | dtypes |
 |---------|-------|--------|--------|
-| `"rust"` | `ssmsolve[rust]` | CBLAS `gemv` via `ssmsolve-rs` | float32, float64 |
+| `"rust"` | `ssmsolve[rust]` | Fortran BLAS `gemv` (F-order) / CBLAS `gemv` (C-order) via `ssmsolve-rs` | float32, float64 |
 | `"numba"` | `ssmsolve[jit]` | Numba `@jit(nopython=True)` | float32, float64 |
 | `"pyfar"` | *(fallback)* | `scipy.linalg gemv` (BLAS) | float32, float64 |
 
@@ -58,11 +58,9 @@ Detection order: `rust` → `numba` → `pyfar`. The active backend is exposed a
 All classes accept a `storage` parameter (`'F'` column-major or `'C'` row-major). The system
 state `x` is updated in place across calls, enabling sequential chunk processing.
 
-## Classes
+## Benchmarks
 
-| Class | Status |
-|-------|--------|
-| `StateSpaceModel` | available |
-| `TriangularStateSpaceModel` | planned |
-| `DiagonalStateSpaceModel` | planned |
+Benchmarks were run on: Intel(R) Core(TM) i5-9400F CPU @ 2.90GHz (6 cores, up to 4.10 GHz), 15 GiB RAM, Ubuntu 24.04.4 LTS (Linux 6.8.0-110-generic).
+
+![Benchmark results](benchmarks.png)
 
