@@ -20,13 +20,12 @@ class ERA:
 
     """
 
-    def __init__(self, ir, name=None):
+    def __init__(self, ir):
         self.reductor = ERAReductor(
             ir.time.T[1:],
             sampling_time=1 / ir.sampling_rate,
             feedthrough=ir.time[..., -1].T,
             force_stability=False,
-            name=name,
         )
 
     def reduce(self, order):
@@ -43,7 +42,7 @@ class ERA:
             The state-space matrices of the reduced model.
 
         """
-        return StateSpaceModel(self.reductor.reduce(order).to_matrices()[:4], 1/self.reductor.sampling_time)
+        return StateSpaceModel(self.reductor.reduce(order).to_matrices()[:4], 1 / self.reductor.sampling_time)
 
 
 class _NumbaRandomizedERAReductor(RandomizedERAReductor):
