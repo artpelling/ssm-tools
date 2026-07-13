@@ -1,4 +1,5 @@
 import numpy as np
+from pyfar.classes.filter import StateSpaceModel
 from pymor.algorithms.rand_la import RandomizedRangeFinder
 from pymor.reductors.era import ERAReductor, RandomizedERAReductor
 
@@ -19,12 +20,13 @@ class ERA:
 
     """
 
-    def __init__(self, ir):
+    def __init__(self, ir, name=None):
         self.reductor = ERAReductor(
             ir.time.T[1:],
             sampling_time=1 / ir.sampling_rate,
             feedthrough=ir.time[..., -1].T,
             force_stability=False,
+            name=name,
         )
 
     def reduce(self, order):
@@ -41,7 +43,7 @@ class ERA:
             The state-space matrices of the reduced model.
 
         """
-        return self.reductor.reduce(order).to_matrices()[:4]
+        return StateSpaceModel(self.reductor.reduce(order).to_matrices()[:4], 1/self.reductor.sampling_time)
 
 
 class _NumbaRandomizedERAReductor(RandomizedERAReductor):
