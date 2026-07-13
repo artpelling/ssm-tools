@@ -10,7 +10,7 @@ dev = [
 across = { workspace = true }
 ssmsolve = { workspace = true }
 ssmsolve-rs = { workspace = true }
-pyfar = { git = "https://github.com/pyfar/pyfar", rev = "fd33a589807f75ef238c5ac7f6436276eb4503e3" }
+pyfar = { git = "https://github.com/pyfar/pyfar", rev = "6a365b807886a8636c1f4b9e001d4ca83d0c2471" }
 
 [tool.uv.workspace]
 members = ["packages/*"]
