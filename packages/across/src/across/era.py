@@ -17,18 +17,20 @@ class ERA:
     ir : pyfar.Signal
         The impulse response to be reduced. Must be a `pyfar.Signal` with `cdim=2`, where
         `ir.cshape=(n_inputs, n_outputs)`.
+    pad_zero : bool
+        Whether the impulse response is padded with zeros to double its length before constructing the Hankel operator.
 
     """
 
-    def __init__(self, ir):
+    def __init__(self, ir, pad_zero=False):
         self.reductor = ERAReductor(
             ir.time.T[1:],
             sampling_time=1 / ir.sampling_rate,
             feedthrough=ir.time[..., -1].T,
-            force_stability=False,
+            force_stability=pad_zero,
         )
 
-    def reduce(self, order):
+    def reduce(self, order, num_left=None, num_right=None):
         """Reduce the impulse response to a state-space model of given order.
 
         Parameters
@@ -38,11 +40,14 @@ class ERA:
 
         Returns
         -------
-        A, B, C, D : ndarray
-            The state-space matrices of the reduced model.
-
+        sys : pyfar.StateSpaceModel
+            The reduced order state-space model.
+        num_left : int or None
+            Number of left (output) directions for tangential projection.
+        num_right: int or None
+            Number of right (input) directions for tangential projection.
         """
-        return StateSpaceModel(self.reductor.reduce(order).to_matrices()[:4], 1 / self.reductor.sampling_time)
+        return StateSpaceModel(*self.reductor.reduce(order, num_left=num_left, num_right=num_right).to_matrices()[:4], 1 / self.reductor.sampling_time)
 
 
 class _NumbaRandomizedERAReductor(RandomizedERAReductor):
@@ -107,15 +112,17 @@ class RandomizedERA(ERA):
     ir : pyfar.Signal
         The impulse response to be reduced. Must be a `pyfar.Signal` with `cdim=2`, where
         `ir.cshape=(n_inputs, n_outputs)`.
+    pad_zero : bool
+        Whether the impulse response is padded with zeros to double its length before constructing the Hankel operator.
 
     """
 
-    def __init__(self, ir, dtype=np.float32):
+    def __init__(self, ir, pad_zero=False, dtype=np.float32):
         self.reductor = _NumbaRandomizedERAReductor(
             ir.time.T[1:].astype(dtype),
             sampling_time=1 / ir.sampling_rate,
             feedthrough=ir.time[..., -1].T,
-            force_stability=True,
+            force_stability=pad_zero,
             rrf_opts={
                 "block_size": 50,
                 "power_iterations": 2,
