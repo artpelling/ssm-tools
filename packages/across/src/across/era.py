@@ -26,7 +26,7 @@ class ERA:
         self.reductor = ERAReductor(
             ir.time.T[1:],
             sampling_time=1 / ir.sampling_rate,
-            feedthrough=ir.time[..., -1].T,
+            feedthrough=ir.time[..., 0].T,
             force_stability=pad_zero,
         )
 
@@ -121,7 +121,7 @@ class RandomizedERA(ERA):
         self.reductor = _NumbaRandomizedERAReductor(
             ir.time.T[1:].astype(dtype),
             sampling_time=1 / ir.sampling_rate,
-            feedthrough=ir.time[..., -1].T,
+            feedthrough=ir.time[..., 0].T,
             force_stability=pad_zero,
             rrf_opts={
                 "block_size": 50,
