@@ -1,9 +1,13 @@
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel
-from pymor.algorithms.rand_la import RandomizedRangeFinder
-from pymor.reductors.era import ERAReductor, RandomizedERAReductor
+from pymor.algorithms.rand_la import RandomizedSVD
+from pymor.core.defaults import set_defaults
+from pymor.reductors.era import ERAReductor
+from pymor.reductors.era import RandomizedERAReductor as pyMORRandomizedERAReductor
 
 from across.fastoperators import NumbaHankelOperator
+
+set_defaults({"pymor.bindings.scipy.svd_lapack_driver.driver": "gesdd"})
 
 
 class ERA:
@@ -18,7 +22,7 @@ class ERA:
         The impulse response to be reduced. Must be a `pyfar.Signal` with `cdim=2`, where
         `ir.cshape=(n_inputs, n_outputs)`.
     pad_zero : bool
-        Whether the impulse response is padded with zeros to double its length before constructing the Hankel operator.
+        Whether to pad the impulse response with zeros before constructing the Hankel operator.
 
     """
 
@@ -47,10 +51,13 @@ class ERA:
         num_right: int or None
             Number of right (input) directions for tangential projection.
         """
-        return StateSpaceModel(*self.reductor.reduce(order, num_left=num_left, num_right=num_right).to_matrices()[:4], 1 / self.reductor.sampling_time)
+        return StateSpaceModel(
+            *self.reductor.reduce(order, num_left=num_left, num_right=num_right).to_matrices()[:4],
+            1 / self.reductor.sampling_time,
+        )
 
 
-class _NumbaRandomizedERAReductor(RandomizedERAReductor):
+class _NumbaRandomizedERAReductor(pyMORRandomizedERAReductor):
     def __init__(
         self,
         data,
@@ -58,47 +65,47 @@ class _NumbaRandomizedERAReductor(RandomizedERAReductor):
         force_stability=True,
         feedthrough=None,
         allow_transpose=True,
-        rrf_opts={},  # noqa: B006
+        power_iterations=2,
+        rrf_args=None,
         num_left=None,
         num_right=None,
     ):
-        super(RandomizedERAReductor, self).__init__(
+        super(pyMORRandomizedERAReductor, self).__init__(
             data, sampling_time, force_stability=force_stability, feedthrough=feedthrough
         )
         self.__auto_init(locals())
-        # data = data.copy()
+        if rrf_args is not None and "error_estimator" in rrf_args:
+            assert rrf_args["error_estimator"] == "loo", "Only the leave-one-out error estimator is supported."
         if num_left is not None or num_right is not None:
             self.logger.info("Computing the projected Markov parameters ...")
             data = self._project_markov_parameters(num_left, num_right)
-        if self.force_stability:
-            data = np.concatenate([data, np.zeros_like(data)[1:]], axis=0)
-        s = (data.shape[0] + 1) // 2
+        s = data.shape[0] if self.force_stability else (data.shape[0] + 1) // 2
         self._transpose = (data.shape[1] < data.shape[2]) if allow_transpose else False
-        self._H = NumbaHankelOperator(data[:s], r=data[s - 1 :])
+        self._H = NumbaHankelOperator(data) if self.force_stability else NumbaHankelOperator(data[:s], r=data[s - 1 :])
         if self._transpose:
             self.logger.info("Using transposed formulation.")
             self._H = self._H.H
-
-        # monkey patch RRF with dtype of data for memory efficiency
-        dtype = data.dtype
-        self._last_sv_U_V = None
-        self._rrf = RandomizedRangeFinder(self._H, **rrf_opts)
-        self._rrf.Omega = self._rrf.A.range.make_array(np.empty((self._rrf.A.range.dim, 0), dtype=dtype))
-        self._rrf.estimator_last_basis_size, self.last_estimated_error = 0, np.inf
-        self._rrf.Q = [
-            self._rrf.A.range.make_array(np.empty((self._rrf.A.range.dim, 0), dtype=dtype))
-            for _ in range(self._rrf.power_iterations + 1)
+        rrf_args = {"qr_method": "shifted_chol_qr", **(rrf_args or {}), "error_estimator": "loo"}
+        self.randomized_svd = RandomizedSVD(
+            self._H, power_iterations=power_iterations, low_rank_svd_method="scipy_svd", rrf_args=rrf_args
+        )
+        range_finder = self.randomized_svd.range_finder
+        range_finder.Omega = self._H.range.make_array(np.empty((self._H.range.dim, 0), dtype=data.dtype, order="F"))
+        range_finder.Q = [
+            self._H.range.make_array(np.empty((self._H.range.dim, 0), dtype=data.dtype, order="F"))
+            for _ in range(power_iterations + 1)
         ]
-        self._rrf.R = [np.empty((0, 0), dtype=dtype) for _ in range(self._rrf.power_iterations + 1)]
-        self._rrf._draw_samples = self._draw_samples
+        range_finder.R = [np.empty((0, 0), dtype=data.dtype, order="F") for _ in range(power_iterations + 1)]
+        self.randomized_svd.B = self._H.source.make_array(
+            np.empty((self._H.source.dim, 0), dtype=data.dtype, order="F")
+        )
+        range_finder._draw_samples = self._draw_samples
 
     def _draw_samples(self, num):
-        # faster way of computing the random samples for Hankel matrices
-        self._rrf.logger.info(f"Taking {num} samples ...")
-        dtype = self.data.dtype
-        V = np.zeros((self._H._circulant.source.dim, num), dtype=dtype)
+        self.randomized_svd.range_finder.logger.info(f"Taking {num} samples ...")
+        V = np.zeros((self._H._circulant.source.dim, num), dtype=self.data.dtype, order="F")
         V[: self._H.source.dim] = self._H.source.random(num, distribution="normal").to_numpy()
-        return self._H.range.make_array(self._H._circulant._circular_matvec(V)[: self._H.range.dim])
+        return self._H.range.make_array(self._H._circulant._circular_matvec(V, self._H.range.dim))
 
 
 class RandomizedERA(ERA):
@@ -113,7 +120,7 @@ class RandomizedERA(ERA):
         The impulse response to be reduced. Must be a `pyfar.Signal` with `cdim=2`, where
         `ir.cshape=(n_inputs, n_outputs)`.
     pad_zero : bool
-        Whether the impulse response is padded with zeros to double its length before constructing the Hankel operator.
+        Whether to pad the impulse response with zeros before constructing the Hankel operator.
 
     """
 
@@ -123,9 +130,9 @@ class RandomizedERA(ERA):
             sampling_time=1 / ir.sampling_rate,
             feedthrough=ir.time[..., 0].T,
             force_stability=pad_zero,
-            rrf_opts={
+            power_iterations=2,
+            rrf_args={
                 "block_size": 50,
-                "power_iterations": 2,
                 "qr_method": "shifted_chol_qr",
                 "error_estimator": "loo",
                 "qr_opts": {"orth_tol": 1e-6, "maxiter": 10},

@@ -33,7 +33,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "pyfar", git = "https://github.com/pyfar/pyfar?rev=6a365b807886a8636c1f4b9e001d4ca83d0c2471" },
-    { name = "pymor", git = "https://github.com/pymor/pymor.git?rev=d2bde7ba4e486580887ab910b15e2f5992b91f41" },
+    { name = "pymor", git = "https://github.com/pymor/pymor.git?rev=fix-hankel-operator" },
     { name = "rocket-fft" },
 ]
 
@@ -718,7 +718,7 @@ wheels = [
 
 [package.optional-dependencies]
 patchelf = [
-    { name = "patchelf", marker = "sys_platform == 'linux'" },
+    { name = "patchelf" },
 ]
 
 [[package]]
@@ -984,8 +984,8 @@ wheels = [
 
 [[package]]
 name = "pymor"
-version = "2026.1.0.dev0"
-source = { git = "https://github.com/pymor/pymor.git?rev=d2bde7ba4e486580887ab910b15e2f5992b91f41#d2bde7ba4e486580887ab910b15e2f5992b91f41" }
+version = "2026.2.0.dev0"
+source = { git = "https://github.com/pymor/pymor.git?rev=fix-hankel-operator#8ba1b0d7b8b064acb243c32b04e5e2af5d314f15" }
 dependencies = [
     { name = "cyclopts" },
     { name = "diskcache" },
