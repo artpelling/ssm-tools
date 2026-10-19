@@ -9,7 +9,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "pyfar@git+https://github.com/pyfar/pyfar.git@state-space-systems",
-    "pymor@git+https://github.com/pymor/pymor.git@fix-hankel-operator",
+    "pymor>=2026.1",
     "rocket-fft",
 ]
 license = "MIT"
