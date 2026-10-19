@@ -24,6 +24,7 @@ class NumbaCirculantOperator(NumpyCirculantOperator):
         ],
         parallel=True,
         fastmath=True,
+        cache=True,
     )
     def _real_ops(m, p, n, d, vec, y, C):
         dim = d // p

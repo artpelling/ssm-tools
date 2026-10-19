@@ -5,8 +5,6 @@ from pymor.core.defaults import set_defaults
 from pymor.reductors.era import ERAReductor
 from pymor.reductors.era import RandomizedERAReductor as pyMORRandomizedERAReductor
 
-from across.fastoperators import NumbaHankelOperator
-
 set_defaults({"pymor.bindings.scipy.svd_lapack_driver.driver": "gesdd"})
 
 
@@ -70,6 +68,8 @@ class _NumbaRandomizedERAReductor(pyMORRandomizedERAReductor):
         num_left=None,
         num_right=None,
     ):
+        from across.fastoperators import NumbaHankelOperator
+
         super(pyMORRandomizedERAReductor, self).__init__(
             data, sampling_time, force_stability=force_stability, feedthrough=feedthrough
         )
