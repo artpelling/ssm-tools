@@ -55,6 +55,102 @@ class ERA:
         )
 
 
+class ProjectedERA(ERA):
+    """ERA with predefined tangential directions and original input/output channels.
+
+    The non-direct Markov parameters are projected before passing them to pyMOR.
+    The resulting B and C matrices are lifted back to the original channels,
+    while the original feedthrough is preserved without projection.
+
+    Parameters
+    ----------
+    ir : pyfar.Signal
+        Signal with ``cdim=2`` and ``cshape=(n_inputs, n_outputs)``.
+    pad_zero : bool, optional
+        Whether to zero-pad the Signal when constructing the Hankel operator.
+    left_basis : array_like, optional
+        Finite, real, column-orthonormal output basis of shape
+        ``(n_outputs, n_left)``. Omit to leave the output channels unprojected.
+    right_basis : array_like, optional
+        Finite, real, column-orthonormal input basis of shape
+        ``(n_inputs, n_right)``. Omit to leave the input channels unprojected.
+
+    Notes
+    -----
+    At least one basis is required. Bases are copied and fixed at construction;
+    their column counts determine the number of tangential directions. Full-width
+    bases are supported. No additional direction counts are accepted by ``reduce``.
+    """
+
+    def __init__(self, ir, pad_zero=False, *, left_basis=None, right_basis=None):
+        if ir.cdim != 2:
+            raise ValueError("ir must have cdim=2 with cshape=(n_inputs, n_outputs).")
+        if left_basis is None and right_basis is None:
+            raise ValueError("At least one of left_basis or right_basis must be supplied.")
+        self.left_basis = self._validate_basis(left_basis, ir.cshape[1], "left_basis")
+        self.right_basis = self._validate_basis(right_basis, ir.cshape[0], "right_basis")
+        self._feedthrough = ir.time[..., 0].T.copy()
+        data = self._project_markov_parameters(ir.time.T[1:], self.left_basis, self.right_basis)
+        self.reductor = ERAReductor(data, sampling_time=1 / ir.sampling_rate, force_stability=pad_zero)
+
+    @staticmethod
+    def _project_markov_parameters(data, left_basis, right_basis):
+        """Use time-contiguous matrix products and the lower-FLOP contraction order."""
+        _, p, m = data.shape
+        # pyfar stores time contiguously; keep it inside each BLAS matrix, not as a batch axis.
+        data = data.transpose(2, 1, 0)  # (inputs, outputs, time)
+        if right_basis is None:
+            data = left_basis.T @ data
+        elif left_basis is None:
+            data = (right_basis.T @ data.swapaxes(0, 1)).swapaxes(0, 1)
+        else:
+            n_left, n_right = left_basis.shape[1], right_basis.shape[1]
+            # The common time dimension and factor of two cancel from both FLOP estimates.
+            left_cost = n_left * m * (p + n_right)
+            right_cost = p * n_right * (m + n_left)
+            if (left_cost, n_left * m) <= (right_cost, p * n_right):
+                data = left_basis.T @ data
+                data = (right_basis.T @ data.swapaxes(0, 1)).swapaxes(0, 1)
+            else:
+                data = right_basis.T @ data.swapaxes(0, 1)
+                data = left_basis.T @ data.swapaxes(0, 1)
+        return data.transpose(2, 1, 0)
+
+    @staticmethod
+    def _validate_basis(basis, dimension, name):
+        if basis is None:
+            return None
+        basis = np.array(basis, copy=True)
+        if basis.ndim != 2 or basis.shape[0] != dimension or not 0 < basis.shape[1] <= dimension:
+            raise ValueError(f"{name} must have shape ({dimension}, k) with 1 <= k <= {dimension}.")
+        if not np.issubdtype(basis.dtype, np.number) or not np.isrealobj(basis) or not np.isfinite(basis).all():
+            raise ValueError(f"{name} must contain finite, real numbers.")
+        if not np.allclose(basis.T @ basis, np.eye(basis.shape[1]), rtol=1e-5, atol=1e-6):
+            raise ValueError(f"{name} must have orthonormal columns.")
+        basis.setflags(write=False)
+        return basis
+
+    def reduce(self, order):
+        """Construct a state-space model of the given order in the original channels.
+
+        Parameters
+        ----------
+        order : int
+            Desired order of the reduced model.
+
+        Returns
+        -------
+        pyfar.StateSpaceModel
+            State-space model with the original feedthrough and sampling rate.
+        """
+        A, B, C = self.reductor.reduce(order).to_matrices()[:3]
+        if self.right_basis is not None:
+            B = B @ self.right_basis.T
+        if self.left_basis is not None:
+            C = self.left_basis @ C
+        return StateSpaceModel(A, B, C, self._feedthrough, 1 / self.reductor.sampling_time)
+
+
 class _NumbaRandomizedERAReductor(pyMORRandomizedERAReductor):
     def __init__(
         self,
