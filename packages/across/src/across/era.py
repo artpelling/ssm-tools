@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 from pyfar.classes.filter import StateSpaceModel
 from pymor.algorithms.rand_la import RandomizedSVD
@@ -69,26 +71,42 @@ class ProjectedERA(ERA):
     pad_zero : bool, optional
         Whether to zero-pad the Signal when constructing the Hankel operator.
     left_basis : array_like, optional
-        Finite, real, column-orthonormal output basis of shape
+        Finite, real output basis of shape
         ``(n_outputs, n_left)``. Omit to leave the output channels unprojected.
     right_basis : array_like, optional
-        Finite, real, column-orthonormal input basis of shape
+        Finite, real input basis of shape
         ``(n_inputs, n_right)``. Omit to leave the input channels unprojected.
+    right_inverse : array_like, optional
+        Inverse input transform of shape ``(n_right, n_inputs)``.
+        If omitted, use the Moore-Penrose pseudoinverse of ``right_basis``.
 
     Notes
     -----
     At least one basis is required. Bases are copied and fixed at construction;
     their column counts determine the number of tangential directions. Full-width
     bases are supported. No additional direction counts are accepted by ``reduce``.
+    Non-orthonormal columns trigger a warning but are used unchanged. Lifting uses
+    inverse transforms, not plain transposes. The output transform ``left_basis.T``
+    is inverted with its Moore-Penrose pseudoinverse.
     """
 
-    def __init__(self, ir, pad_zero=False, *, left_basis=None, right_basis=None):
+    def __init__(self, ir, pad_zero=False, *, left_basis=None, right_basis=None, right_inverse=None):
         if ir.cdim != 2:
             raise ValueError("ir must have cdim=2 with cshape=(n_inputs, n_outputs).")
         if left_basis is None and right_basis is None:
             raise ValueError("At least one of left_basis or right_basis must be supplied.")
         self.left_basis = self._validate_basis(left_basis, ir.cshape[1], "left_basis")
         self.right_basis = self._validate_basis(right_basis, ir.cshape[0], "right_basis")
+        self.right_inverse = None
+        if right_inverse is not None:
+            if self.right_basis is None:
+                raise ValueError("right_inverse requires right_basis.")
+            inverse = np.array(right_inverse, copy=True)
+            shape = self.right_basis.T.shape
+            if not np.allclose(self.right_basis @ (inverse @ self.right_basis), self.right_basis, rtol=1e-5, atol=1e-6):
+                raise ValueError("right_inverse does not invert right_basis on its column space.")
+            inverse.setflags(write=False)
+            self.right_inverse = inverse
         self._feedthrough = ir.time[..., 0].T.copy()
         data = self._project_markov_parameters(ir.time.T[1:], self.left_basis, self.right_basis)
         self.reductor = ERAReductor(data, sampling_time=1 / ir.sampling_rate, force_stability=pad_zero)
@@ -126,7 +144,11 @@ class ProjectedERA(ERA):
         if not np.issubdtype(basis.dtype, np.number) or not np.isrealobj(basis) or not np.isfinite(basis).all():
             raise ValueError(f"{name} must contain finite, real numbers.")
         if not np.allclose(basis.T @ basis, np.eye(basis.shape[1]), rtol=1e-5, atol=1e-6):
-            raise ValueError(f"{name} must have orthonormal columns.")
+            warnings.warn(
+                f"{name} columns are not orthonormal; projected singular values depend on basis scaling.",
+                UserWarning,
+                stacklevel=3,
+            )
         basis.setflags(write=False)
         return basis
 
@@ -145,9 +167,12 @@ class ProjectedERA(ERA):
         """
         A, B, C = self.reductor.reduce(order).to_matrices()[:3]
         if self.right_basis is not None:
-            B = B @ self.right_basis.T
+            inverse = self.right_inverse
+            if inverse is None:
+                inverse = np.linalg.pinv(self.right_basis.astype(float, copy=False))
+            B = B @ inverse
         if self.left_basis is not None:
-            C = self.left_basis @ C
+            C = np.linalg.pinv(self.left_basis.T.astype(float, copy=False)) @ C
         return StateSpaceModel(A, B, C, self._feedthrough, 1 / self.reductor.sampling_time)
 
 
